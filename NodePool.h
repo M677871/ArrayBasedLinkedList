@@ -115,7 +115,7 @@ void NodePool<T, NUM_NODES>::release(int idx) {
 
 template<typename T, int NUM_NODES>
 typename NodePool<T, NUM_NODES>::Node& NodePool<T, NUM_NODES>::operator[](int idx) {
-    if (idx > 0 && idx < NUM_NODES)
+    if (idx >= 0 && idx < NUM_NODES)
        
     return pool[idx];
 }
