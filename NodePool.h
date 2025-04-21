@@ -106,23 +106,24 @@ int NodePool<T, NUM_NODES>::acquire() {
 
 template<typename T, int NUM_NODES>
 void NodePool<T, NUM_NODES>::release(int idx) {
-    if (idx < 0 || idx >= NUM_NODES)
-        throw std::out_of_range("Invalid node index");
+    if (idx > 0 && idx < NUM_NODES){
+        
     pool[idx].next = freeHead;
     freeHead = idx;
+    }
 }
 
 template<typename T, int NUM_NODES>
 typename NodePool<T, NUM_NODES>::Node& NodePool<T, NUM_NODES>::operator[](int idx) {
-    if (idx < 0 || idx >= NUM_NODES)
-        throw std::out_of_range("Invalid node index");
+    if (idx > 0 && idx < NUM_NODES)
+       
     return pool[idx];
 }
 
 template<typename T, int NUM_NODES>
 const typename NodePool<T, NUM_NODES>::Node& NodePool<T, NUM_NODES>::operator[](int idx) const {
-    if (idx < 0 || idx >= NUM_NODES)
-        throw std::out_of_range("Invalid node index");
+    if (idx >= 0 && idx < NUM_NODES)
+       
     return pool[idx];
 }
 
