@@ -80,7 +80,7 @@ public:
     private:
     
         /******** Data Members ********/
-        Node pool[NUM_NODES]; ///< Array of node structures
+        Node pool[NUM_NODES]; ///< Array of node 
         int freeHead;         ///< Index of the head of the free list
     
     }; //--- end of NodePool class
@@ -106,8 +106,7 @@ int NodePool<T, NUM_NODES>::acquire() {
 
 template<typename T, int NUM_NODES>
 void NodePool<T, NUM_NODES>::release(int idx) {
-    if (idx > 0 && idx < NUM_NODES){
-        
+    if (idx >= 0 && idx < NUM_NODES){  
     pool[idx].next = freeHead;
     freeHead = idx;
     }

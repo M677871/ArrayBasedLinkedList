@@ -139,16 +139,6 @@ class ArrayLinkedList
      Postcondition: List order is reversed.
    -----------------------------------------------------------------------*/
 
-
-   
-   bool isSorted() const;
-/*----------------------------------------------------------------------
-     Check if the list is sorted in ascending order.
-
-     Precondition:  None
-     Postcondition: Returns true if the list is sorted.
-   -----------------------------------------------------------------------*/
-
    void removeDuplicates();
     /*----------------------------------------------------------------------
       Remove duplicate values from the list.
@@ -392,42 +382,36 @@ ArrayLinkedList<T,N> ArrayLinkedList<T,N>::operator+(const ArrayLinkedList& rhs)
     result += rhs;
     return result;
 }
-template<typename T, int N>
-bool ArrayLinkedList<T,N>::isSorted() const {
-    if (isEmpty()) return true;
-    int ptr = head;
-    while (pool[ptr].next != NULL_INDEX) {
-        if (pool[ptr].data > pool[pool[ptr].next].data) return false;
-        ptr = pool[ptr].next;
-    }
-    return true;
-}
+
 
 template<typename T,int N>
 std::ostream& operator<<(std::ostream& out, const ArrayLinkedList<T,N>& lst) {
     lst.display(out);
     return out;
 }
-
-template<typename T, int N>
-void ArrayLinkedList<T,N>::removeDuplicates() {
-    if (! isEmpty()) {
-    int ptr = head;
-    while (ptr != NULL_INDEX) {
-        int innerPtr = ptr;
-        while (pool[innerPtr].next != NULL_INDEX) {
-            if (pool[innerPtr].data == pool[pool[innerPtr].next].data) {
-                int duplicateIdx = pool[innerPtr].next;
-                pool[innerPtr].next = pool[duplicateIdx].next;
-                pool.release(duplicateIdx);
-            } else {
-                innerPtr = pool[innerPtr].next;
+template<typename T,int N>
+void ArrayLinkedList<T, N>::removeDuplicates() {
+    if (!isEmpty()) {
+        int ptr = head;
+        while (ptr != NULL_INDEX) {
+            int prev = ptr;
+            int innerPtr = pool[ptr].next;
+            while (innerPtr != NULL_INDEX) {
+                if (pool[innerPtr].data == pool[ptr].data) {
+                    int duplicateIdx = innerPtr;
+                    pool[prev].next = pool[innerPtr].next;
+                    innerPtr = pool[innerPtr].next;
+                    pool.release(duplicateIdx);  
+                } else {
+                    prev = innerPtr;
+                    innerPtr = pool[innerPtr].next;
+                }
             }
+            ptr = pool[ptr].next;
         }
-        ptr = pool[ptr].next;
     }
-  }
 }
+
 template<typename T, int N>
 
 ArrayLinkedList<T,N>::~ArrayLinkedList() {

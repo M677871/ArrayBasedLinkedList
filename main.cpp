@@ -26,9 +26,8 @@ int main() {
              << "11. Clear List\n"
              << "12. Concatenate with second list (+=)\n"
              << "13. Create/Append to second list\n"
-             << "14. Check Sorted\n"
-             << "15. Remove Duplicates\n"
-             << "16. Exit\n"
+             << "14. Remove Duplicates\n"
+             << "15. Exit\n"
              << "Select an option: ";
         int choice;
         if (!(cin >> choice)) break;
@@ -112,13 +111,10 @@ int main() {
                 cout << "Second list now: " << list2;
                 break;
             case 14:
-                cout << (list.isSorted() ? "List is sorted" : "List is not sorted") << endl;
-                break;
-            case 15:
                 list.removeDuplicates();
                 cout << "Duplicates removed: " << list;
                 break;
-            case 16:
+            case 15:
                 return 0;
             default:
                 cout << "Invalid option" << endl;
