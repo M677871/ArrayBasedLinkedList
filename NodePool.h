@@ -35,7 +35,13 @@ public:
           Precondition:  NUM_NODES must be a positive integer.
           Postcondition: All nodes are initialized and linked as a free list.
         -----------------------------------------------------------------------*/
+        int newNode(); 
+         /*----------------------------------------------------------------------
+          return free node index.
     
+          Precondition:  there must be a free node available.
+          Postcondition: Returns the index of a free node. Removes it from the pool.
+        -----------------------------------------------------------------------*/
         /***** acquire operation *****/
         int acquire();
         /*----------------------------------------------------------------------
@@ -47,7 +53,7 @@ public:
         -----------------------------------------------------------------------*/
     
         /***** release operation *****/
-        void release(int idx);
+        void deleteNode(int );
         /*----------------------------------------------------------------------
           Return a node index back to the free pool.
     
@@ -95,6 +101,15 @@ NodePool<T, NUM_NODES>::NodePool() {
     freeHead = 0;
 }
 
+template <typename T, int NUM_NODES>
+int NodePool<T,NUM_NODES>::newNode() {
+    if (freeHead == NULL_INDEX)
+        return NULL_INDEX;
+    int ptr = freeHead;
+    freeHead = node[freeHead].next;
+    pool[ptr].next = NULL_INDEX;
+    return ptr;
+}
 template<typename T, int NUM_NODES>
 int NodePool<T, NUM_NODES>::acquire() {
     if (freeHead == NULL_INDEX)
@@ -105,12 +120,11 @@ int NodePool<T, NUM_NODES>::acquire() {
 }
 
 template<typename T, int NUM_NODES>
-void NodePool<T, NUM_NODES>::release(int idx) {
-    if (idx >= 0 && idx < NUM_NODES){  
-    pool[idx].next = freeHead;
-    freeHead = idx;
-    }
+void NodePool<T, NUM_NODES>::deleteNode(int ptr) {
+    pool[ptr].next = freeHead;
+    freeHead = ptr;
 }
+
 
 template<typename T, int NUM_NODES>
 typename NodePool<T, NUM_NODES>::Node& NodePool<T, NUM_NODES>::operator[](int idx) {
