@@ -27,7 +27,8 @@ int main() {
              << "12. Concatenate with second list (+=)\n"
              << "13. Create/Append to second list\n"
              << "14. Remove Duplicates\n"
-             << "15. Exit\n"
+             << "15. Insert in Sorted Order\n"
+             << "16. Exit\n"
              << "Select an option: ";
         int choice;
         if (!(cin >> choice)) break;
@@ -114,7 +115,13 @@ int main() {
                 list.removeDuplicates();
                 cout << "Duplicates removed: " << list;
                 break;
-            case 15:
+                case 15:
+                cout << "value to insert in sorted order: ";
+                getline(cin, value);
+                list.insertSorted(value);
+                cout << "List after insertion: " << list;
+                break;
+            case 16:
                 return 0;
             default:
                 cout << "Invalid option" << endl;

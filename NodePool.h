@@ -64,6 +64,7 @@ public:
     
         /***** subscript operator overloads *****/
         Node& operator[](int idx);
+
         const Node& operator[](int idx) const;
         /*----------------------------------------------------------------------
           Provides access to nodes by index (modifiable and read-only versions).
@@ -119,23 +120,14 @@ bool NodePool<T, NUM_NODES>::isNodeFree(int idx) const {
     }
     return false;
 }
-/*
-template<typename T, int NUM_NODES>
-int NodePool<T, NUM_NODES>::acquire() {
-    if (freeHead == NULL_INDEX)
-        throw std::overflow_error("No free nodes available");
-    int idx = freeHead;
-    freeHead = pool[idx].next;
-    return idx;
-}*/
-
-// in NodePool.h, add:
 
 template<typename T,int NUM_NODES>
 bool NodePool<T,NUM_NODES>::acquire(int idx) {
 
-    if (idx < 0 || idx >= NUM_NODES)
+    if (idx < 0 || idx >= NUM_NODES){
         throw std::out_of_range("acquire: index out of range");
+        return false;
+    }
     int prev = NULL_INDEX, cur = freeHead;
    
     while (cur != NULL_INDEX && cur != idx) {
@@ -162,16 +154,18 @@ void NodePool<T,NUM_NODES>::deleteNode(int idx) {
 
 template<typename T, int NUM_NODES>
 typename NodePool<T, NUM_NODES>::Node& NodePool<T, NUM_NODES>::operator[](int idx) {
-    if (idx >= 0 && idx < NUM_NODES)
-       
-    return pool[idx];
+    if (idx < 0 || idx >= NUM_NODES)
+    throw std::out_of_range("NodePool::operator[]");
+  return pool[idx];
+  
 }
 
 template<typename T, int NUM_NODES>
 const typename NodePool<T, NUM_NODES>::Node& NodePool<T, NUM_NODES>::operator[](int idx) const {
-    if (idx >= 0 && idx < NUM_NODES)
-       
-    return pool[idx];
+    if (idx < 0 || idx >= NUM_NODES)
+    throw std::out_of_range("NodePool::operator[]");
+  return pool[idx];
+  
 }
 
 template<typename T, int NUM_NODES>

@@ -174,6 +174,11 @@ class ArrayLinkedList
       Precondition:  The caller passes a reference to another ArrayLinkedList.
       Postcondition: The current list is assigned the values of the other list.
     -----------------------------------------------------------------------*/
+
+
+    bool insertSorted(const T& value) ;
+
+
  private:
  /******** Data Members ********/
    NodePool<T, NUM_NODES>& pool;   // node pool reference
@@ -285,6 +290,8 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T& key, const T& value) {
         ptr = pool[ptr].next;
     if (ptr == NULL_INDEX) return false;
     int nodeIdx = pool.newNode();
+    if (nodeIdx == NULL_INDEX) 
+    return false;   
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = pool[ptr].next;
     pool[ptr].next = nodeIdx;
@@ -427,5 +434,45 @@ template<typename T, int N>
 ArrayLinkedList<T,N>::~ArrayLinkedList() {
     clear();
 }
+
+template<typename T, int NUM_NODES>
+bool ArrayLinkedList<T,NUM_NODES>::insertSorted(const T& value) {
+    // 1) allocate a free node (throws or returns -1 on failure)
+    int newIdx = pool.newNode();  
+    if (newIdx == NULL_INDEX)    // pool empty
+        return false;
+
+    // 2) stash the value and default next
+    pool[newIdx].data = value;
+    pool[newIdx].next = NULL_INDEX;
+
+    // 3) empty‐list or goes to front?
+    if (head == NULL_INDEX ||
+        value < pool[head].data) 
+    {
+        // “Mills” case: head==0 → first element
+        pool[newIdx].next = head;
+        head = newIdx;           // first = new slot
+        return true;
+    }
+
+    // 4) walk to find the node after which to insert
+    int prev = head;
+    while (pool[prev].next != NULL_INDEX
+           && pool[ pool[prev].next ].data < value)
+    {
+        prev = pool[prev].next;
+    }
+
+    // 5) insert after prev
+    //    e.g. prev==1 (“Brown”), newIdx==9 (“Grant”), then:
+    //      pool[9].next = pool[1].next (→ 2)
+    //      pool[1].next = 9
+    pool[newIdx].next = pool[prev].next;
+    pool[prev].next = newIdx;
+
+    return true;
+}
+
 
 #endif // LIST_H
