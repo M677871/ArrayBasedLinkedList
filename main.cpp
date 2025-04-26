@@ -130,3 +130,45 @@ int main() {
 
     return 0;
 }
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/cppFiles/main.cc to edit this template
+ */
+
+/* 
+ * File:   main.cpp
+ * Author: MYK
+ *
+ * Created on April 22, 2025, 2:26 PM
+ */
+/*
+#include <iostream>
+#include "List.h"
+#include "NodePool.h"
+
+int main(int argc, char** argv) {
+    NodePool<std::string> pool;
+    List<std::string> myList(pool);
+
+    // Insert elements
+    myList.insertFront("Smith");
+    myList.insertFront("Jones");
+    myList.insertFront("Brown");
+
+    std::cout << "Initial list:\n";
+    myList.display();
+
+    // Insert "Grant" after "Brown"
+    myList.insertAfter("Brown", "Grant");
+    std::cout << "\nAfter inserting 'Grant' after 'Brown':\n";
+    myList.display();
+
+    // Delete "Jones"
+    myList.remove("Jones");
+    std::cout << "\nAfter deleting 'Jones':\n";
+    myList.display();
+
+    return 0;
+}
+*/
