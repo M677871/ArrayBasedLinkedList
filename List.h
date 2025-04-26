@@ -437,26 +437,24 @@ ArrayLinkedList<T,N>::~ArrayLinkedList() {
 
 template<typename T, int NUM_NODES>
 bool ArrayLinkedList<T,NUM_NODES>::insertSorted(const T& value) {
-    // 1) allocate a free node (throws or returns -1 on failure)
+    
     int newIdx = pool.newNode();  
-    if (newIdx == NULL_INDEX)    // pool empty
+    if (newIdx == NULL_INDEX)    
         return false;
 
-    // 2) stash the value and default next
     pool[newIdx].data = value;
     pool[newIdx].next = NULL_INDEX;
 
-    // 3) empty‐list or goes to front?
+   
     if (head == NULL_INDEX ||
         value < pool[head].data) 
     {
-        // “Mills” case: head==0 → first element
+        
         pool[newIdx].next = head;
-        head = newIdx;           // first = new slot
+        head = newIdx;           
         return true;
     }
 
-    // 4) walk to find the node after which to insert
     int prev = head;
     while (pool[prev].next != NULL_INDEX
            && pool[ pool[prev].next ].data < value)
@@ -464,10 +462,6 @@ bool ArrayLinkedList<T,NUM_NODES>::insertSorted(const T& value) {
         prev = pool[prev].next;
     }
 
-    // 5) insert after prev
-    //    e.g. prev==1 (“Brown”), newIdx==9 (“Grant”), then:
-    //      pool[9].next = pool[1].next (→ 2)
-    //      pool[1].next = 9
     pool[newIdx].next = pool[prev].next;
     pool[prev].next = newIdx;
 

@@ -12,7 +12,8 @@
 
 #ifndef NODE_POOL_H
 #define NODE_POOL_H
-
+using namespace std;
+#include <iostream>
 #include <stdexcept>
 
 static const int NULL_INDEX = -1;
@@ -83,6 +84,7 @@ public:
           Postcondition: Returns the number of free nodes.
         -----------------------------------------------------------------------*/
         bool isNodeFree(int idx) const;
+        void displayFree(ostream& os) const;
     
     private:
     
@@ -177,6 +179,18 @@ int NodePool<T, NUM_NODES>::freeCount() const {
         ++count;
     }
     return count;
+}
+
+template<typename T,int NUM_NODES>
+void NodePool<T,NUM_NODES>::displayFree(ostream& os) const {
+    os << "[";
+    bool first = true;
+    for (int ptr = freeHead; ptr != NULL_INDEX; ptr = pool[ptr].next) {
+        if (!first) os << ", ";
+        os << ptr;
+        first = false;
+    }
+    os << "]";
 }
 
 #endif // NODE_POOL_H
