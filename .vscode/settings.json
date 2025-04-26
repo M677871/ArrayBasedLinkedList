@@ -60,6 +60,7 @@
     "*.ejs": "html",
     "*.tcc": "cpp",
     "complex": "cpp",
-    "iosfwd": "cpp"
+    "iosfwd": "cpp",
+    "limits": "cpp"
   }
 }

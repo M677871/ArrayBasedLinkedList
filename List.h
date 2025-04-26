@@ -227,33 +227,37 @@ void ArrayLinkedList<T, NUM_NODES>::clear() {
     int ptr = head;
     while (ptr != NULL_INDEX) {
         int next = pool[ptr].next;
-        pool.release(ptr);
+        pool.deleteNode(ptr);
         ptr = next;
     }
     head = NULL_INDEX;
 }
 
 template<typename T, int NUM_NODES>
+
 void ArrayLinkedList<T, NUM_NODES>::display(std::ostream& os) const {
-   
     os << "[";
     int ptr = head;
-    if(ptr == NULL_INDEX){
-        os <<"The list is Empty";
-        
+
+    if (ptr == NULL_INDEX) {
+        os << "The list is Empty";
+    } else {
+        while (ptr != NULL_INDEX) {
+            os << pool[ptr].data; 
+            int next = pool[ptr].next; 
+            if (next != NULL_INDEX) {
+                os << ", "; 
+            }
+            ptr = next; 
+        }
     }
-    
-    while (ptr != NULL_INDEX) {
-        os << pool[ptr].data;
-        ptr = pool[ptr].next;
-        if (ptr != NULL_INDEX) os << ", ";
-    }
+
     os << "]\n";
 }
 
 template<typename T, int NUM_NODES>
 void ArrayLinkedList<T, NUM_NODES>::insertFront(const T& value) {
-    int nodeIdx = pool.acquire();
+    int nodeIdx = pool.newNode();
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = head;
     head = nodeIdx;
@@ -261,7 +265,7 @@ void ArrayLinkedList<T, NUM_NODES>::insertFront(const T& value) {
 
 template<typename T, int NUM_NODES>
 void ArrayLinkedList<T, NUM_NODES>::insertBack(const T& value) {
-    int nodeIdx = pool.acquire();
+    int nodeIdx = pool.newNode();
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = NULL_INDEX;
     if (isEmpty()) {
@@ -280,7 +284,7 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T& key, const T& value) {
     while (ptr != NULL_INDEX && pool[ptr].data != key)
         ptr = pool[ptr].next;
     if (ptr == NULL_INDEX) return false;
-    int nodeIdx = pool.acquire();
+    int nodeIdx = pool.newNode();
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = pool[ptr].next;
     pool[ptr].next = nodeIdx;
@@ -288,20 +292,26 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T& key, const T& value) {
 }
 
 template<typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::insertAt(int position, const T& value) {
-    if (position < 0 || position > size()) return false;
-    if (position == 0) {
-        insertFront(value);
-        return true;
+bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T& value) {
+    
+    if (arrayIndex < 0 || arrayIndex >= NUM_NODES) 
+        return false;
+
+    if (! pool.acquire(arrayIndex))
+        return false;
+
+    pool[arrayIndex].data = value;
+    pool[arrayIndex].next = NULL_INDEX;
+
+    if (head == NULL_INDEX) {
+        head = arrayIndex;
+    } else {
+        int ptr = head;
+        while (pool[ptr].next != NULL_INDEX)
+            ptr = pool[ptr].next;
+        pool[ptr].next = arrayIndex;
     }
-    int ptr = head;
-    for (int i = 1; i < position; ++i)
-        ptr = pool[ptr].next;
-    if (ptr == NULL_INDEX) return false;
-    int nodeIdx = pool.acquire();
-    pool[nodeIdx].data = value;
-    pool[nodeIdx].next = pool[ptr].next;
-    pool[ptr].next = nodeIdx;
+
     return true;
 }
 
@@ -315,7 +325,7 @@ bool ArrayLinkedList<T, NUM_NODES>::removeValue(const T& value) {
     if (ptr == NULL_INDEX) return false;
     if (prev == NULL_INDEX) head = pool[ptr].next;
     else pool[prev].next = pool[ptr].next;
-    pool.release(ptr);
+    pool.deleteNode(ptr);
     return true;
 }
 
@@ -329,7 +339,7 @@ bool ArrayLinkedList<T, NUM_NODES>::removeAt(int position) {
     }
     if (prev == NULL_INDEX) head = pool[ptr].next;
     else pool[prev].next = pool[ptr].next;
-    pool.release(ptr);
+    pool.deleteNode(ptr);
     return true;
 }
 
@@ -401,7 +411,7 @@ void ArrayLinkedList<T, N>::removeDuplicates() {
                     int duplicateIdx = innerPtr;
                     pool[prev].next = pool[innerPtr].next;
                     innerPtr = pool[innerPtr].next;
-                    pool.release(duplicateIdx);  
+                    pool.deleteNode(duplicateIdx);  
                 } else {
                     prev = innerPtr;
                     innerPtr = pool[innerPtr].next;

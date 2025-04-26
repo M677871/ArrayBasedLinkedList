@@ -43,7 +43,7 @@ public:
           Postcondition: Returns the index of a free node. Removes it from the pool.
         -----------------------------------------------------------------------*/
         /***** acquire operation *****/
-        int acquire();
+        bool acquire(int idx);
         /*----------------------------------------------------------------------
           Allocate a node from the free pool.
     
@@ -81,7 +81,7 @@ public:
           Precondition:  None
           Postcondition: Returns the number of free nodes.
         -----------------------------------------------------------------------*/
-
+        bool isNodeFree(int idx) const;
     
     private:
     
@@ -101,15 +101,25 @@ NodePool<T, NUM_NODES>::NodePool() {
     freeHead = 0;
 }
 
-template <typename T, int NUM_NODES>
+template<typename T,int NUM_NODES>
 int NodePool<T,NUM_NODES>::newNode() {
     if (freeHead == NULL_INDEX)
         return NULL_INDEX;
-    int ptr = freeHead;
-    freeHead = node[freeHead].next;
-    pool[ptr].next = NULL_INDEX;
-    return ptr;
+    int idx = freeHead;
+    freeHead = pool[idx].next;              
+    pool[idx].next = NULL_INDEX;     
+    return idx;
 }
+template<typename T, int NUM_NODES>
+bool NodePool<T, NUM_NODES>::isNodeFree(int idx) const {
+    int ptr = freeHead;
+    while (ptr != NULL_INDEX) {
+        if (ptr == idx) return true;
+        ptr = pool[ptr].next;
+    }
+    return false;
+}
+/*
 template<typename T, int NUM_NODES>
 int NodePool<T, NUM_NODES>::acquire() {
     if (freeHead == NULL_INDEX)
@@ -117,12 +127,36 @@ int NodePool<T, NUM_NODES>::acquire() {
     int idx = freeHead;
     freeHead = pool[idx].next;
     return idx;
+}*/
+
+// in NodePool.h, add:
+
+template<typename T,int NUM_NODES>
+bool NodePool<T,NUM_NODES>::acquire(int idx) {
+
+    if (idx < 0 || idx >= NUM_NODES)
+        throw std::out_of_range("acquire: index out of range");
+    int prev = NULL_INDEX, cur = freeHead;
+   
+    while (cur != NULL_INDEX && cur != idx) {
+        prev = cur;
+        cur  = pool[cur].next;
+    }
+    if (cur == NULL_INDEX) return false;   
+   
+    if (prev == NULL_INDEX) freeHead = pool[cur].next;
+    else                   pool[prev].next = pool[cur].next;
+    pool[cur].next = NULL_INDEX;          
+    return true;
 }
 
-template<typename T, int NUM_NODES>
-void NodePool<T, NUM_NODES>::deleteNode(int ptr) {
-    pool[ptr].next = freeHead;
-    freeHead = ptr;
+
+template<typename T,int NUM_NODES>
+void NodePool<T,NUM_NODES>::deleteNode(int idx) {
+    if (idx < 0 || idx >= NUM_NODES)
+        throw std::out_of_range("deleteNode: index out of range");
+    pool[idx].next = freeHead;
+    freeHead = idx;
 }
 
 
@@ -152,3 +186,5 @@ int NodePool<T, NUM_NODES>::freeCount() const {
 }
 
 #endif // NODE_POOL_H
+
+
