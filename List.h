@@ -20,27 +20,26 @@
 #include "NodePool.h"
 #include <iostream>
 
-
 /***** Template Class Definition *****/
-template<typename T, int NUM_NODES>
+template <typename T, int NUM_NODES>
 class ArrayLinkedList
 {
- public:
- /******** Function Members ********/
+public:
+    /******** Function Members ********/
 
-   /***** Class constructor *****/
-   ArrayLinkedList(NodePool<T, NUM_NODES>& p);
-   /*----------------------------------------------------------------------
-     Construct an ArrayLinkedList object.
+    /***** Class constructor *****/
+    ArrayLinkedList(NodePool<T, NUM_NODES> &p);
+    /*----------------------------------------------------------------------
+      Construct an ArrayLinkedList object.
 
-     Precondition:  The caller passes a reference to a NodePool.
-     Postcondition: An empty list object is constructed with head == NULL_INDEX.
-   -----------------------------------------------------------------------*/
-/***** Class copy constructor *****/
- ArrayLinkedList(const ArrayLinkedList& other) ;
+      Precondition:  The caller passes a reference to a NodePool.
+      Postcondition: An empty list object is constructed with head == NULL_INDEX.
+    -----------------------------------------------------------------------*/
+    /***** Class copy constructor *****/
+    ArrayLinkedList(const ArrayLinkedList &other);
     /*----------------------------------------------------------------------
       Copy constructor for ArrayLinkedList.
-    
+
       Precondition:  The caller passes a reference to another ArrayLinkedList.
       Postcondition: A new list object is created as a copy of the other list.
     -----------------------------------------------------------------------*/
@@ -49,188 +48,195 @@ class ArrayLinkedList
     ~ArrayLinkedList();
     /*----------------------------------------------------------------------
       Destructor for ArrayLinkedList.
-    
+
       Precondition:  None
       Postcondition: The list is cleared and all nodes are released.
     -----------------------------------------------------------------------*/
 
-   /***** isEmpty operation *****/
-   bool isEmpty() const;
-   /*----------------------------------------------------------------------
-     Check if the list is empty.
+    /***** isEmpty operation *****/
+    bool isEmpty() const;
+    /*----------------------------------------------------------------------
+      Check if the list is empty.
 
-     Precondition:  None
-     Postcondition: Returns true if the list has no elements.
-   -----------------------------------------------------------------------*/
+      Precondition:  None
+      Postcondition: Returns true if the list has no elements.
+    -----------------------------------------------------------------------*/
 
-   /***** size operation *****/
-   int size() const;
-   /*----------------------------------------------------------------------
-     Get the number of elements in the list.
+    /***** size operation *****/
+    int size() const;
+    /*----------------------------------------------------------------------
+      Get the number of elements in the list.
 
-     Precondition:  None
-     Postcondition: Returns the size of the list.
-   -----------------------------------------------------------------------*/
+      Precondition:  None
+      Postcondition: Returns the size of the list.
+    -----------------------------------------------------------------------*/
 
-   /***** clear operation *****/
-   void clear();
-   /*----------------------------------------------------------------------
-     Remove all elements from the list.
+    /***** clear operation *****/
+    void clear();
+    /*----------------------------------------------------------------------
+      Remove all elements from the list.
 
-     Precondition:  None
-     Postcondition: The list is empty and all nodes are released.
-   -----------------------------------------------------------------------*/
+      Precondition:  None
+      Postcondition: The list is empty and all nodes are released.
+    -----------------------------------------------------------------------*/
 
-   /***** display operation *****/
-   void display(std::ostream& os = std::cout) const;
-   /*----------------------------------------------------------------------
-     Display the contents of the list.
+    /***** display operation *****/
+    void display(std::ostream &os = std::cout) const;
+    /*----------------------------------------------------------------------
+      Display the contents of the list.
 
-     Precondition:  os is a valid output stream.
-     Postcondition: Elements of the list are printed in sequence.
-   -----------------------------------------------------------------------*/
+      Precondition:  os is a valid output stream.
+      Postcondition: Elements of the list are printed in sequence.
+    -----------------------------------------------------------------------*/
 
-   /***** insert operations *****/
-   void insertFront(const T& value);
-   void insertBack(const T& value);
-   bool insertAfter(const T& key, const T& value);
-   bool insertAt(int position, const T& value);
-   /*----------------------------------------------------------------------
-     Insert elements in various positions: front, back, after key, or at position.
+    /***** insert operations *****/
+    void insertFront(const T &value);
+    void insertBack(const T &value);
+    bool insertAfter(const T &key, const T &value);
+    bool insertAt(int position, const T &value);
+    /*----------------------------------------------------------------------
+      Insert elements in various positions: front, back, after key, or at position.
 
-     Precondition:  Valid index or key must exist (for insertAfter/insertAt).
-     Postcondition: Element is added to the correct location.
-   -----------------------------------------------------------------------*/
+      Precondition:  Valid index or key must exist (for insertAfter/insertAt).
+      Postcondition: Element is added to the correct location.
+    -----------------------------------------------------------------------*/
 
-   /***** remove operations *****/
-   bool removeValue(const T& value);
-   bool removeAt(int position);
-   /*----------------------------------------------------------------------
-     Remove elements by value or position.
+    /***** remove operations *****/
+    bool removeValue(const T &value);
+    // bool removeAt(int position);
+    /*----------------------------------------------------------------------
+      Remove elements by value or position.
 
-     Precondition:  Value exists or position is within bounds.
-     Postcondition: Element is removed and pool is updated.
-   -----------------------------------------------------------------------*/
+      Precondition:  Value exists or position is within bounds.
+      Postcondition: Element is removed and pool is updated.
+    -----------------------------------------------------------------------*/
 
-   /***** find operation *****/
-   int find(const T& value) const;
-   /*----------------------------------------------------------------------
-     Get index of a given value in the list.
+    /***** find operation *****/
+    int find(const T &value) const;
+    /*----------------------------------------------------------------------
+      Get index of a given value in the list.
 
-     Precondition:  None
-     Postcondition: Returns index or -1 if not found.
-   -----------------------------------------------------------------------*/
+      Precondition:  None
+      Postcondition: Returns index or -1 if not found.
+    -----------------------------------------------------------------------*/
 
-   /***** getAt operation *****/
-   T& getAt(int position) const;
-   /*----------------------------------------------------------------------
-     Get the value at a specific index.
+    /***** getAt operation *****/
+    T &getAt(int position) const;
+    /*----------------------------------------------------------------------
+      Get the value at a specific index.
 
-     Precondition:  Position is within bounds.
-     Postcondition: Returns a reference to the value.
-   -----------------------------------------------------------------------*/
+      Precondition:  Position is within bounds.
+      Postcondition: Returns a reference to the value.
+    -----------------------------------------------------------------------*/
 
-   /***** reverse operation *****/
-   void reverse();
-   /*----------------------------------------------------------------------
-     Reverse the order of elements in the list.
+    /***** reverse operation *****/
+    void reverse();
+    /*----------------------------------------------------------------------
+      Reverse the order of elements in the list.
 
-     Precondition:  None
-     Postcondition: List order is reversed.
-   -----------------------------------------------------------------------*/
+      Precondition:  None
+      Postcondition: List order is reversed.
+    -----------------------------------------------------------------------*/
 
-   void removeDuplicates();
+    void removeDuplicates();
     /*----------------------------------------------------------------------
       Remove duplicate values from the list.
-    
+
       Precondition:  None
       Postcondition: All duplicates are removed.
     -----------------------------------------------------------------------*/
-    
+
     /***** operator overloads *****/
 
+    ArrayLinkedList &operator+=(const ArrayLinkedList &rhs);
+    /*----------------------------------------------------------------------
+      Concatenate two lists.
 
-    ArrayLinkedList& operator+=(const ArrayLinkedList& rhs);
-     /*----------------------------------------------------------------------
-       Concatenate two lists.
-     
-       Precondition:  None
-       Postcondition: Appends rhs to the current list.
-     -----------------------------------------------------------------------*/
-    
-    ArrayLinkedList operator+(const ArrayLinkedList& rhs) const;
-     /*----------------------------------------------------------------------
-       Concatenate two lists.
-     
-       Precondition:  None
-       Postcondition: Returns a new list that is the concatenation of both.
-     -----------------------------------------------------------------------*/
-     // Constructor from external pool
-  
-    ArrayLinkedList& operator=(const ArrayLinkedList& other);
+      Precondition:  None
+      Postcondition: Appends rhs to the current list.
+    -----------------------------------------------------------------------*/
+
+    ArrayLinkedList operator+(const ArrayLinkedList &rhs) const;
+    /*----------------------------------------------------------------------
+      Concatenate two lists.
+
+      Precondition:  None
+      Postcondition: Returns a new list that is the concatenation of both.
+    -----------------------------------------------------------------------*/
+    // Constructor from external pool
+
+    ArrayLinkedList &operator=(const ArrayLinkedList &other);
     /*----------------------------------------------------------------------
       Assignment operator for ArrayLinkedList.
-    
+
       Precondition:  The caller passes a reference to another ArrayLinkedList.
       Postcondition: The current list is assigned the values of the other list.
     -----------------------------------------------------------------------*/
 
+    bool insertSorted(const T &value);
+    bool removeSlot(int slotIdx);
+    ;
 
-    bool insertSorted(const T& value) ;
-
-
- private:
- /******** Data Members ********/
-   NodePool<T, NUM_NODES>& pool;   // node pool reference
-   int head;                       // head index of the list
+private:
+    /******** Data Members ********/
+    NodePool<T, NUM_NODES> &pool; // node pool reference
+    int head;                     // head index of the list
 
 }; //--- end of ArrayLinkedList class
 
-
-
 /***** Implementation Section *****/
 
-template<typename T,int N>
-ArrayLinkedList<T,N>::ArrayLinkedList(NodePool<T,N>& p)
+template <typename T, int N>
+ArrayLinkedList<T, N>::ArrayLinkedList(NodePool<T, N> &p)
     : pool(p), head(NULL_INDEX) {}
 
-template<typename T,int N>
-ArrayLinkedList<T,N>::ArrayLinkedList(const ArrayLinkedList& other)
-    : pool(other.pool), head(NULL_INDEX) {
-    for (int idx = other.head; idx != NULL_INDEX; idx = other.pool[idx].next) {
+template <typename T, int N>
+ArrayLinkedList<T, N>::ArrayLinkedList(const ArrayLinkedList &other)
+    : pool(other.pool), head(NULL_INDEX)
+{
+    for (int idx = other.head; idx != NULL_INDEX; idx = other.pool[idx].next)
+    {
         insertBack(other.pool[idx].data);
     }
 }
-template<typename T,int N>
-ArrayLinkedList<T,N>& ArrayLinkedList<T,N>::operator=(const ArrayLinkedList& other) {
-    if (this != &other) {
+template <typename T, int N>
+ArrayLinkedList<T, N> &ArrayLinkedList<T, N>::operator=(const ArrayLinkedList &other)
+{
+    if (this != &other)
+    {
         clear();
-        for (int idx = other.head; idx != NULL_INDEX; idx = other.pool[idx].next) {
+        for (int idx = other.head; idx != NULL_INDEX; idx = other.pool[idx].next)
+        {
             insertBack(other.pool[idx].data);
         }
     }
     return *this;
 }
 
-template<typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::isEmpty() const {
+template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::isEmpty() const
+{
     return head == NULL_INDEX;
 }
 
-template<typename T, int NUM_NODES>
-int ArrayLinkedList<T, NUM_NODES>::size() const {
+template <typename T, int NUM_NODES>
+int ArrayLinkedList<T, NUM_NODES>::size() const
+{
     int count = 0, ptr = head;
-    while (ptr != NULL_INDEX) {
+    while (ptr != NULL_INDEX)
+    {
         ptr = pool[ptr].next;
         ++count;
     }
     return count;
 }
 
-template<typename T, int NUM_NODES>
-void ArrayLinkedList<T, NUM_NODES>::clear() {
+template <typename T, int NUM_NODES>
+void ArrayLinkedList<T, NUM_NODES>::clear()
+{
     int ptr = head;
-    while (ptr != NULL_INDEX) {
+    while (ptr != NULL_INDEX)
+    {
         int next = pool[ptr].next;
         pool.deleteNode(ptr);
         ptr = next;
@@ -238,44 +244,55 @@ void ArrayLinkedList<T, NUM_NODES>::clear() {
     head = NULL_INDEX;
 }
 
-template<typename T, int NUM_NODES>
+template <typename T, int NUM_NODES>
 
-void ArrayLinkedList<T, NUM_NODES>::display(std::ostream& os) const {
+void ArrayLinkedList<T, NUM_NODES>::display(std::ostream &os) const
+{
     os << "[";
     int ptr = head;
 
-    if (ptr == NULL_INDEX) {
+    if (ptr == NULL_INDEX)
+    {
         os << "The list is Empty";
-    } else {
-        while (ptr != NULL_INDEX) {
-            os << pool[ptr].data; 
-            int next = pool[ptr].next; 
-            if (next != NULL_INDEX) {
-                os << ", "; 
+    }
+    else
+    {
+        while (ptr != NULL_INDEX)
+        {
+            os << pool[ptr].data;
+            int next = pool[ptr].next;
+            if (next != NULL_INDEX)
+            {
+                os << ", ";
             }
-            ptr = next; 
+            ptr = next;
         }
     }
 
     os << "]\n";
 }
 
-template<typename T, int NUM_NODES>
-void ArrayLinkedList<T, NUM_NODES>::insertFront(const T& value) {
+template <typename T, int NUM_NODES>
+void ArrayLinkedList<T, NUM_NODES>::insertFront(const T &value)
+{
     int nodeIdx = pool.newNode();
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = head;
     head = nodeIdx;
 }
 
-template<typename T, int NUM_NODES>
-void ArrayLinkedList<T, NUM_NODES>::insertBack(const T& value) {
+template <typename T, int NUM_NODES>
+void ArrayLinkedList<T, NUM_NODES>::insertBack(const T &value)
+{
     int nodeIdx = pool.newNode();
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = NULL_INDEX;
-    if (isEmpty()) {
+    if (isEmpty())
+    {
         head = nodeIdx;
-    } else {
+    }
+    else
+    {
         int ptr = head;
         while (pool[ptr].next != NULL_INDEX)
             ptr = pool[ptr].next;
@@ -283,36 +300,42 @@ void ArrayLinkedList<T, NUM_NODES>::insertBack(const T& value) {
     }
 }
 
-template<typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T& key, const T& value) {
+template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
+{
     int ptr = head;
     while (ptr != NULL_INDEX && pool[ptr].data != key)
         ptr = pool[ptr].next;
-    if (ptr == NULL_INDEX) return false;
+    if (ptr == NULL_INDEX)
+        return false;
     int nodeIdx = pool.newNode();
-    if (nodeIdx == NULL_INDEX) 
-    return false;   
+    if (nodeIdx == NULL_INDEX)
+        return false;
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = pool[ptr].next;
     pool[ptr].next = nodeIdx;
     return true;
 }
 
-template<typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T& value) {
-    
-    if (arrayIndex < 0 || arrayIndex >= NUM_NODES) 
+template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T &value)
+{
+
+    if (arrayIndex < 0 || arrayIndex >= NUM_NODES)
         return false;
 
-    if (! pool.acquire(arrayIndex))
+    if (!pool.acquire(arrayIndex))
         return false;
 
     pool[arrayIndex].data = value;
     pool[arrayIndex].next = NULL_INDEX;
 
-    if (head == NULL_INDEX) {
+    if (head == NULL_INDEX)
+    {
         head = arrayIndex;
-    } else {
+    }
+    else
+    {
         int ptr = head;
         while (pool[ptr].next != NULL_INDEX)
             ptr = pool[ptr].next;
@@ -322,38 +345,50 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T& value) {
     return true;
 }
 
-template<typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::removeValue(const T& value) {
+template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::removeValue(const T &value)
+{
     int ptr = head, prev = NULL_INDEX;
-    while (ptr != NULL_INDEX && pool[ptr].data != value) {
+    while (ptr != NULL_INDEX && pool[ptr].data != value)
+    {
         prev = ptr;
         ptr = pool[ptr].next;
     }
-    if (ptr == NULL_INDEX) return false;
-    if (prev == NULL_INDEX) head = pool[ptr].next;
-    else pool[prev].next = pool[ptr].next;
+    if (ptr == NULL_INDEX)
+        return false;
+    if (prev == NULL_INDEX)
+        head = pool[ptr].next;
+    else
+        pool[prev].next = pool[ptr].next;
     pool.deleteNode(ptr);
     return true;
 }
-
-template<typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::removeAt(int position) {
-    if (position < 0 || position >= size()) return false;
+/*
+template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::removeAt(int position)
+{
+    if (position < 0 || position >= size())
+        return false;
     int ptr = head, prev = NULL_INDEX;
-    for (int i = 0; i < position; ++i) {
+    for (int i = 0; i < position; ++i)
+    {
         prev = ptr;
         ptr = pool[ptr].next;
     }
-    if (prev == NULL_INDEX) head = pool[ptr].next;
-    else pool[prev].next = pool[ptr].next;
+    if (prev == NULL_INDEX)
+        head = pool[ptr].next;
+    else
+        pool[prev].next = pool[ptr].next;
     pool.deleteNode(ptr);
     return true;
 }
-
-template<typename T, int NUM_NODES>
-int ArrayLinkedList<T, NUM_NODES>::find(const T& value) const {
+*/
+template <typename T, int NUM_NODES>
+int ArrayLinkedList<T, NUM_NODES>::find(const T &value) const
+{
     int ptr = head, idx = 0;
-    while (ptr != NULL_INDEX) {
+    while (ptr != NULL_INDEX)
+    {
         if (pool[ptr].data == value)
             return idx;
         ptr = pool[ptr].next;
@@ -362,8 +397,9 @@ int ArrayLinkedList<T, NUM_NODES>::find(const T& value) const {
     return -1;
 }
 
-template<typename T, int NUM_NODES>
-T& ArrayLinkedList<T, NUM_NODES>::getAt(int position) const {
+template <typename T, int NUM_NODES>
+T &ArrayLinkedList<T, NUM_NODES>::getAt(int position) const
+{
     if (position < 0 || position >= size())
         throw std::out_of_range("Position out of range");
     int ptr = head;
@@ -372,11 +408,13 @@ T& ArrayLinkedList<T, NUM_NODES>::getAt(int position) const {
     return pool[ptr].data;
 }
 
-template<typename T, int NUM_NODES>
-void ArrayLinkedList<T, NUM_NODES>::reverse() {
+template <typename T, int NUM_NODES>
+void ArrayLinkedList<T, NUM_NODES>::reverse()
+{
     int prev = NULL_INDEX;
     int curr = head;
-    while (curr != NULL_INDEX) {
+    while (curr != NULL_INDEX)
+    {
         int next = pool[curr].next;
         pool[curr].next = prev;
         prev = curr;
@@ -384,42 +422,52 @@ void ArrayLinkedList<T, NUM_NODES>::reverse() {
     }
     head = prev;
 }
-template<typename T, int N>
-ArrayLinkedList<T,N>& ArrayLinkedList<T,N>::operator+=(const ArrayLinkedList& rhs) {
+template <typename T, int N>
+ArrayLinkedList<T, N> &ArrayLinkedList<T, N>::operator+=(const ArrayLinkedList &rhs)
+{
     int ptr = rhs.head;
-    while (ptr != NULL_INDEX) {
+    while (ptr != NULL_INDEX)
+    {
         insertBack(rhs.pool[ptr].data);
         ptr = rhs.pool[ptr].next;
     }
     return *this;
 }
-template<typename T, int N>
-ArrayLinkedList<T,N> ArrayLinkedList<T,N>::operator+(const ArrayLinkedList& rhs) const {
+template <typename T, int N>
+ArrayLinkedList<T, N> ArrayLinkedList<T, N>::operator+(const ArrayLinkedList &rhs) const
+{
     ArrayLinkedList result(*this);
     result += rhs;
     return result;
 }
 
-
-template<typename T,int N>
-std::ostream& operator<<(std::ostream& out, const ArrayLinkedList<T,N>& lst) {
+template <typename T, int N>
+std::ostream &operator<<(std::ostream &out, const ArrayLinkedList<T, N> &lst)
+{
     lst.display(out);
     return out;
 }
-template<typename T,int N>
-void ArrayLinkedList<T, N>::removeDuplicates() {
-    if (!isEmpty()) {
+template <typename T, int N>
+void ArrayLinkedList<T, N>::removeDuplicates()
+{
+    if (!isEmpty())
+    {
         int ptr = head;
-        while (ptr != NULL_INDEX) {
+        while (ptr != NULL_INDEX)
+        {
             int prev = ptr;
             int innerPtr = pool[ptr].next;
-            while (innerPtr != NULL_INDEX) {
-                if (pool[innerPtr].data == pool[ptr].data) {
+            while (innerPtr != NULL_INDEX)
+            {
+                if (pool[innerPtr].data == pool[ptr].data)
+                {
                     int duplicateIdx = innerPtr;
                     pool[prev].next = pool[innerPtr].next;
                     innerPtr = pool[innerPtr].next;
-                    pool.deleteNode(duplicateIdx);  
-                } else {
+                    pool.deleteNode(duplicateIdx);
+                }
+                else
+                {
                     prev = innerPtr;
                     innerPtr = pool[innerPtr].next;
                 }
@@ -429,35 +477,34 @@ void ArrayLinkedList<T, N>::removeDuplicates() {
     }
 }
 
-template<typename T, int N>
+template <typename T, int N>
 
-ArrayLinkedList<T,N>::~ArrayLinkedList() {
+ArrayLinkedList<T, N>::~ArrayLinkedList()
+{
     clear();
 }
 
-template<typename T, int NUM_NODES>
-bool ArrayLinkedList<T,NUM_NODES>::insertSorted(const T& value) {
-    
-    int newIdx = pool.newNode();  
-    if (newIdx == NULL_INDEX)    
+template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::insertSorted(const T &value)
+{
+    int newIdx = pool.newNode();
+    if (newIdx == NULL_INDEX)
         return false;
 
     pool[newIdx].data = value;
     pool[newIdx].next = NULL_INDEX;
 
-   
     if (head == NULL_INDEX ||
-        value < pool[head].data) 
+        value < pool[head].data)
     {
-        
+
         pool[newIdx].next = head;
-        head = newIdx;           
+        head = newIdx;
         return true;
     }
 
     int prev = head;
-    while (pool[prev].next != NULL_INDEX
-           && pool[ pool[prev].next ].data < value)
+    while (pool[prev].next != NULL_INDEX && pool[pool[prev].next].data < value)
     {
         prev = pool[prev].next;
     }
@@ -468,8 +515,34 @@ bool ArrayLinkedList<T,NUM_NODES>::insertSorted(const T& value) {
     return true;
 }
 
+template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::removeSlot(int slotIdx)
+{
+
+    if (slotIdx < 0 || slotIdx >= NUM_NODES)
+        return false;
+
+    int ptr = head, prev = NULL_INDEX;
+    while (ptr != NULL_INDEX && ptr != slotIdx)
+    {
+        prev = ptr;
+        ptr = pool[ptr].next;
+    }
+    if (ptr != slotIdx)
+        return false;
+
+    if (prev == NULL_INDEX)
+        head = pool[ptr].next;
+    else
+        pool[prev].next = pool[ptr].next;
+
+    pool.deleteNode(ptr);
+    return true;
+}
+
 
 #endif // LIST_H
+
 
 /*
 #ifndef LIST_H
@@ -507,7 +580,7 @@ public:
     List<T>& operator=(const List<T>& other);   // Assignment operator
 };
 
-// Implementation Section 
+// Implementation Section
 
 // Constructor initializes the list with a reference to the pool and sets the first pointer to NULL_VALUE
 template <typename T>
@@ -799,8 +872,9 @@ List<T>& List<T>::operator=(const List<T>& other) {
         curr = pool.node[curr].next;
     }
     reverse(); // Reverse to preserve original order
-    
-    return *this; // 
+
+    return *this; //
 }
 #endif // LIST_H
 */
+

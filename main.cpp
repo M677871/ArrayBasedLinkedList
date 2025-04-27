@@ -37,7 +37,7 @@ int main()
             break;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        string value , key;
+        string value, key;
         int pos;
         bool result;
 
@@ -55,7 +55,8 @@ int main()
             break;
         case 3:
             cout << "Key: ";
-            if(list.isEmpty()) {
+            if (list.isEmpty())
+            {
                 cout << "List is empty" << endl;
                 break;
             }
@@ -69,7 +70,8 @@ int main()
         case 4:
             cout << "Free slots: ";
             pool.displayFree(cout);
-            cout << endl << "Position: ";
+            cout << endl
+                 << "Position: ";
             cin >> pos;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Value: ";
@@ -78,15 +80,30 @@ int main()
             cout << (result ? "Inserted" : "Invalid position") << endl;
             break;
         case 5:
-            cout << "Value: ";
+            cout << "List : ";
+            if (list.isEmpty())
+            {
+                cout << "List is empty" << endl;
+                break;
+            }
+            cout << "the keys are :" << list << endl;
             getline(cin, value);
             result = list.removeValue(value);
             cout << (result ? "Removed" : "Value not found") << endl;
             break;
         case 6:
-            cout << "Position: ";
+            if (list.isEmpty())
+            {
+
+                cout << "List is empty" << endl;
+                break;
+            }
+            cout << "the Used positions are :" << endl;
+            pool.displayUsed(cout);
+            cout << endl
+                 << "Position: ";
             cin >> pos;
-            result = list.removeAt(pos);
+            result = list.removeSlot(pos);
             cout << (result ? "Removed" : "Invalid position") << endl;
             break;
         case 7:
@@ -140,6 +157,7 @@ int main()
     }
 
     return 0;
+
 }
 
 /*
@@ -182,4 +200,5 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
 */
