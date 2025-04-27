@@ -19,6 +19,7 @@
 
 #include "NodePool.h"
 #include <iostream>
+#include <limits>
 
 /***** Template Class Definition *****/
 template <typename T, int NUM_NODES>
@@ -88,7 +89,7 @@ public:
       Precondition:  os is a valid output stream.
       Postcondition: Elements of the list are printed in sequence.
     -----------------------------------------------------------------------*/
-
+    bool removeSlot(int slotIdx);
     /***** insert operations *****/
     void insertFront(const T &value);
     void insertBack(const T &value);
@@ -174,7 +175,7 @@ public:
     -----------------------------------------------------------------------*/
 
     bool insertSorted(const T &value);
-    bool removeSlot(int slotIdx);
+    
     ;
 
 private:
@@ -273,6 +274,31 @@ void ArrayLinkedList<T, NUM_NODES>::display(std::ostream &os) const
 }
 
 template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::removeSlot(int slotIdx)
+{
+
+    if (slotIdx < 0 || slotIdx >= NUM_NODES)
+        return false;
+
+    int ptr = head, prev = NULL_INDEX;
+    while (ptr != NULL_INDEX && ptr != slotIdx)
+    {
+        prev = ptr;
+        ptr = pool[ptr].next;
+    }
+    if (ptr != slotIdx)
+        return false;
+
+    if (prev == NULL_INDEX)
+        head = pool[ptr].next;
+    else
+        pool[prev].next = pool[ptr].next;
+
+    pool.deleteNode(ptr);
+    return true;
+}
+
+template <typename T, int NUM_NODES>
 void ArrayLinkedList<T, NUM_NODES>::insertFront(const T &value)
 {
     int nodeIdx = pool.newNode();
@@ -299,7 +325,7 @@ void ArrayLinkedList<T, NUM_NODES>::insertBack(const T &value)
         pool[ptr].next = nodeIdx;
     }
 }
-
+/*
 template <typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
 {
@@ -317,6 +343,63 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
     return true;
 }
 
+*/
+template<typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
+{
+    // 1) find the key in the list
+    int ptr = head;
+    while (ptr != NULL_INDEX && pool[ptr].data != key)
+        ptr = pool[ptr].next;
+    if (ptr == NULL_INDEX)
+        return false;
+
+    // 2) try allocating a new node
+    int nodeIdx = pool.newNode();
+    if (nodeIdx == NULL_INDEX) {
+        // pool is full → prompt deletion
+        std::cout << "List is full. Delete an element to make room? (y/n): ";
+        char c; 
+        std::cin >> c;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (c != 'y' && c != 'Y') return false;
+
+        std::cout << "Current list:\n" << *this;
+        std::cout << "Position to delete (0-based in the list): ";
+        int delPos;
+        if (!(std::cin >> delPos)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input\n";
+            return false;
+        }
+
+        if (!this->removeSlot(delPos)) {
+            std::cout << "Deletion failed\n";
+            return false;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        // after deletion, try allocating again
+        nodeIdx = pool.newNode();
+        if (nodeIdx == NULL_INDEX) {
+            std::cout << "Unexpected error: still no free node.\n";
+            return false;
+        }
+    }
+
+    // 3) Insert the new node AFTER the found key node
+    pool[nodeIdx].data = value;
+    pool[nodeIdx].next = pool[ptr].next;
+    pool[ptr].next = nodeIdx;
+
+    return true;
+}
+
+
+
+
+/**
 template <typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T &value)
 {
@@ -344,6 +427,51 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T &value)
 
     return true;
 }
+*/
+
+
+template<typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T &value)
+{
+    
+    if (arrayIndex < 0 || arrayIndex >= NUM_NODES)
+        return false;
+
+    if (pool.freeCount() == 0) {
+        std::cout << "List is full. Delete position "<< arrayIndex <<" to make room? (y/n): \n";
+        char c;
+        std::cin  >> c;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (c!='y' && c!='Y') return false;
+
+        std::cout << "Current list: \n" ;
+       
+        
+        if ( !this->removeSlot(arrayIndex)) {
+            std::cout << "Deletion failed\n";
+            return false;
+        }
+       
+    }
+    if (!pool.acquire(arrayIndex))
+        return false;
+
+    pool[arrayIndex].data = value;
+    pool[arrayIndex].next = NULL_INDEX;
+
+    if (head == NULL_INDEX) {
+        head = arrayIndex;
+    } else {
+        int ptr = head;
+        while (pool[ptr].next != NULL_INDEX)
+        ptr = pool[ptr].next;
+        pool[ptr].next = arrayIndex;
+    }
+
+    return true;
+}
+
+
 
 template <typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::removeValue(const T &value)
@@ -515,30 +643,7 @@ bool ArrayLinkedList<T, NUM_NODES>::insertSorted(const T &value)
     return true;
 }
 
-template <typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::removeSlot(int slotIdx)
-{
 
-    if (slotIdx < 0 || slotIdx >= NUM_NODES)
-        return false;
-
-    int ptr = head, prev = NULL_INDEX;
-    while (ptr != NULL_INDEX && ptr != slotIdx)
-    {
-        prev = ptr;
-        ptr = pool[ptr].next;
-    }
-    if (ptr != slotIdx)
-        return false;
-
-    if (prev == NULL_INDEX)
-        head = pool[ptr].next;
-    else
-        pool[prev].next = pool[ptr].next;
-
-    pool.deleteNode(ptr);
-    return true;
-}
 
 
 #endif // LIST_H

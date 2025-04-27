@@ -8,9 +8,9 @@ using namespace std;
 
 int main()
 {
-    NodePool<string, 10> pool;
-    ArrayLinkedList<string, 10> list(pool);
-    ArrayLinkedList<string, 10> list2(pool);
+    NodePool<string, 5> pool;
+    ArrayLinkedList<string, 5> list(pool);
+    ArrayLinkedList<string, 5> list2(pool);
 
     while (true)
     {
