@@ -90,6 +90,14 @@ public:
       Postcondition: Elements of the list are printed in sequence.
     -----------------------------------------------------------------------*/
     bool removeSlot(int slotIdx);
+    /*----------------------------------------------------------------------
+      Remove a node at a specific index.
+
+      Precondition:  slotIdx is within valid range.
+      Postcondition: The node at slotIdx is removed from the list.
+    -----------------------------------------------------------------------*/
+    bool deleteBack();
+    bool deleteFront();
     /***** insert operations *****/
     void insertFront(const T &value);
     void insertBack(const T &value);
@@ -347,38 +355,45 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
 template<typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
 {
-    // 1) find the key in the list
+    // 1) Find the key in the list
     int ptr = head;
     while (ptr != NULL_INDEX && pool[ptr].data != key)
         ptr = pool[ptr].next;
     if (ptr == NULL_INDEX)
         return false;
 
-    // 2) try allocating a new node
+    // 2) Try allocating a new node
     int nodeIdx = pool.newNode();
     if (nodeIdx == NULL_INDEX) {
         // pool is full → prompt deletion
-        std::cout << "List is full. Delete an element to make room? (y/n): ";
-        char c; 
-        std::cin >> c;
+        std::cout << "List is full. Choose how to delete:\n";
+        std::cout << "1. Delete Front\n";
+        std::cout << "2. Delete Back\n";
+        std::cout << "3. Delete Specific Value\n";
+        std::cout << "Enter choice (1/2/3): ";
+        int choice;
+        std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        if (c != 'y' && c != 'Y') return false;
 
-        std::cout << "Current list:\n" << *this;
-        std::cout << "Position to delete (0-based in the list): ";
-        int delPos;
-        if (!(std::cin >> delPos)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input\n";
+        bool deleted = false;
+        if (choice == 1) {
+            deleted = deleteFront();
+        } else if (choice == 2) {
+            deleted = deleteBack();
+        } else if (choice == 3) {
+            std::cout << "Enter value to delete: ";
+            T delVal;
+            std::getline(std::cin, delVal);
+            deleted = removeValue(delVal);
+        } else {
+            std::cout << "Invalid choice.\n";
             return false;
         }
 
-        if (!this->removeSlot(delPos)) {
-            std::cout << "Deletion failed\n";
+        if (!deleted) {
+            std::cout << "Deletion failed.\n";
             return false;
         }
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         // after deletion, try allocating again
         nodeIdx = pool.newNode();
@@ -395,6 +410,8 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
 
     return true;
 }
+
+
 
 
 
@@ -444,8 +461,6 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T &value)
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         if (c!='y' && c!='Y') return false;
 
-        std::cout << "Current list: \n" ;
-       
         
         if ( !this->removeSlot(arrayIndex)) {
             std::cout << "Deletion failed\n";
@@ -643,6 +658,45 @@ bool ArrayLinkedList<T, NUM_NODES>::insertSorted(const T &value)
     return true;
 }
 
+template<typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::deleteFront()
+{
+    if (head == NULL_INDEX) {
+        // List is empty
+        return false;
+    }
+
+    int temp = head;
+    head = pool[head].next;
+    pool.deleteNode(temp);  // Return node to pool
+    return true;
+}
+
+
+template<typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::deleteBack()
+{
+    if (head == NULL_INDEX) {
+        // List is empty
+        return false;
+    }
+
+    int ptr = head, prev = NULL_INDEX;
+    while (pool[ptr].next != NULL_INDEX) {
+        prev = ptr;
+        ptr = pool[ptr].next;
+    }
+
+    if (prev == NULL_INDEX) {
+        // Only one node in the list
+        head = NULL_INDEX;
+    } else {
+        pool[prev].next = NULL_INDEX;
+    }
+
+    pool.deleteNode(ptr);  // Return last node to pool
+    return true;
+}
 
 
 
