@@ -91,6 +91,7 @@ public:
       Precondition:  None
       Postcondition: Returns the number of free nodes.
     -----------------------------------------------------------------------*/
+    int usedCount() const;
     bool isNodeFree(int idx) const;
     void displayFree(std::ostream &os) const;
     void displayUsed(std::ostream &os) const;
@@ -200,6 +201,12 @@ int NodePool<T, NUM_NODES>::freeCount() const
         ++count;
     }
     return count;
+}
+
+template <typename T, int NUM_NODES>
+int NodePool<T, NUM_NODES>::usedCount() const
+{
+    return NUM_NODES - freeCount();
 }
 
 template <typename T, int NUM_NODES>

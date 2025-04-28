@@ -16,38 +16,39 @@ int main()
     {
         cout << "\n=== Linked List Menu ==="
              << "\n\n=== Insert Operations ==="
-             << "\n1. Insert Front"
-             << "\n2. Insert Back"
-             << "\n3. Insert After"
-             << "\n4. Insert Back at a position"
-             << "\n15. Insert in Sorted Order"
-             << "\n16. Insert in Descending Order"
-             << "\n19. Insert At a specific position"
-             << "\n20. Insert before a specific value"
+             << "\n1. Insert At Front"
+             << "\n2. Insert At Back"
+             << "\n3. Insert After A Specific Value"
+             << "\n4. Insert Before A Specific Value"
+             << "\n5. Insert In Ascending Order"
+             << "\n6. Insert In Descending Order"
+             << "\n7. Insert At A Specific Position"
+             << "\n8. Insert Back At A Position"
 
              << "\n\n=== Remove Operations ==="
-             << "\n5. Remove Value"
-             << "\n6. Remove At Position"
-             << "\n14. Remove Duplicates"
-             << "\n21. Remove all ocurrences of a value"
-             << "\n22. Remove After a specific value"
-             << "\n23. Remove Before a specific value"
+             << "\n9. Remove Value"
+             << "\n10. Remove At Position"
+             << "\n11. Remove Duplicates"
+             << "\n12. Remove All Ocurrences Of A Value"
+             << "\n13. Remove After A Specific Value"
+             << "\n14. Remove Before A Specific Value"
 
              << "\n\n=== Sorting Operations ==="
-             << "\n17. Sort in descending order"
-             << "\n18. Sort in ascending order"
+             << "\n15. Sort In Ascending Order"
+             << "\n16. Sort In Descending Order"
 
              << "\n\n=== Other Operations ==="
-             << "\n7. Display List"
-             << "\n8. Find Value"
-             << "\n9. Reverse List"
-             << "\n10. Size"
-             << "\n11. Clear List"
-             << "\n12. Concatenate with second list (+=)"
-             << "\n13. Create/Append to second list"
+             << "\n17. Display List"
+             << "\n18. Find Value"
+             << "\n19. Reverse List"
+             << "\n20. Size"
+             << "\n21. Clear List"
+             << "\n22. Create/Append To Second List"
+             << "\n23. Concatenate With Second List (+=)"
+             << "\n24. Display Free/Used Slots"
 
              << "\n\n=== Exit ==="
-             << "\n24. Exit"
+             << "\n25. Exit"
              << "\n\nSelect an option: ";
 
         int choice;
@@ -79,6 +80,7 @@ int main()
                 break;
             }
             cout << "the keys are :" << list << endl;
+            cout << "Value to insert after: ";
             getline(cin, key);
             cout << "New Value: ";
             getline(cin, value);
@@ -86,6 +88,57 @@ int main()
             cout << (result ? "Inserted" : "Key not found") << endl;
             break;
         case 4:
+            cout << "Key: ";
+            if (list.isEmpty())
+            {
+                cout << "List is empty" << endl;
+                break;
+            }
+            cout << "the keys are :" << list << endl;
+            cout << "Value to insert before: ";
+            getline(cin, key);
+            cout << "New Value: ";
+            getline(cin, value);
+            result = list.insertBefore(key, value);
+            cout << (result ? "Inserted" : "Key not found") << endl;
+            break;
+        case 5:
+            cout << "value to insert in ascending order: ";
+            getline(cin, value);
+            list.insertSorted(value);
+            cout << "List after insertion: " << list;
+            break;
+        case 6:
+            cout << "value to insert in descending order: ";
+            getline(cin, value);
+            list.insertSorted(value);
+            cout << "List after insertion: " << list;
+            break;
+        case 7:
+            if (pool.freeCount() == 0)
+            {
+                cout << "No free slots available. \n"
+                     << endl;
+                break;
+            }
+            cout << "Free slots: ";
+            pool.displayFree(cout);
+            cout << endl
+                 << "Position: ";
+            cin >> pos;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Value: ";
+            getline(cin, value);
+            result = list.insertAtPosition(pos, value);
+            cout << (result ? "Inserted" : "Invalid position") << endl;
+            break;
+        case 8:
+            if (pool.freeCount() == 0)
+            {
+                cout << "No free slots available. \n"
+                     << endl;
+                break;
+            }
             cout << "Free slots: ";
             pool.displayFree(cout);
             cout << endl
@@ -97,37 +150,71 @@ int main()
             result = list.insertAt(pos, value);
             cout << (result ? "Inserted" : "Invalid position") << endl;
             break;
-        case 5:
-            cout << "List : ";
+        case 9:
             if (list.isEmpty())
             {
                 cout << "List is empty" << endl;
                 break;
             }
-            cout << "the keys are :" << list << endl;
+            cout << "values: " << list << endl;
+            cout << "Value to delete: ";
             getline(cin, value);
             result = list.removeValue(value);
             cout << (result ? "Removed" : "Value not found") << endl;
             break;
-        case 6:
-            if (list.isEmpty())
+        case 10:
+            if (pool.usedCount() == 0)
             {
-
-                cout << "List is empty" << endl;
+                cout << "No used slots available. \n"
+                     << endl;
                 break;
             }
-            cout << "the Used positions are :" << endl;
+            cout << "Used slots: \n";
             pool.displayUsed(cout);
             cout << endl
                  << "Position: ";
             cin >> pos;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             result = list.removeSlot(pos);
             cout << (result ? "Removed" : "Invalid position") << endl;
             break;
-        case 7:
+        case 11:
+            list.removeDuplicates();
+            cout << "Duplicates removed: " << list;
+            break;
+        case 12:
+            cout << "values: " << list << endl;
+            cout << "Value to remove all occurrences: ";
+            getline(cin, value);
+            result = list.removeAllOccurrences(value);
+            cout << (result ? "Removed all occurrences" : "Value not found") << endl;
+            break;
+        case 13:
+            cout << "values: " << list << endl;
+            cout << "Value to remove after: ";
+            getline(cin, key);
+            result = list.removeAfter(key);
+            cout << (result ? "Removed" : "Deletion failed.") << endl;
+            break;
+        case 14:
+            cout << "values: " << list << endl;
+            cout << "Value to remove before: ";
+            getline(cin, key);
+            result = list.removeBefore(key);
+            cout << (result ? "Removed" : "Deletion failed.") << endl;
+            break;
+        case 15:
+            list.sortAscending();
+            cout << "List in ascending order: " << list << endl;
+            break;
+        case 16:
+            list.sortDescending();
+            cout << "List in descending order: " << list << endl;
+            break;
+        case 17:
             cout << list;
             break;
-        case 8:
+        case 18:
             cout << "Value: ";
             getline(cin, value);
             pos = list.find(value);
@@ -136,87 +223,51 @@ int main()
             else
                 cout << "Not found" << endl;
             break;
-        case 9:
+        case 19:
             list.reverse();
             cout << "List reversed" << endl;
             break;
-        case 10:
+        case 20:
             cout << "Size: " << list.size() << endl;
             break;
-        case 11:
+        case 21:
             list.clear();
             cout << "List cleared" << endl;
             break;
-        case 12:
-            list += list2;
-            cout << "After concatenation: " << list;
-            break;
-        case 13:
+        case 22:
             cout << "Enter value to append to second list: ";
             getline(cin, value);
             list2.insertBack(value);
             cout << "Second list now: " << list2;
             break;
-        case 14:
-            list.removeDuplicates();
-            cout << "Duplicates removed: " << list;
-            break;
-        case 15:
-            cout << "value to insert in sorted order: ";
-            getline(cin, value);
-            list.insertSorted(value);
-            cout << "List after insertion: " << list;
-            break;
-        case 16:
-            cout << "value to insert in descending order: ";
-            getline(cin, value);
-            list.insertSorted(value);
-            cout << "List after insertion: " << list;
-            break;
-        case 17:
-            list.sortDescending();
-            cout << "List in descending order: " << list << endl;
-            break;
-        case 18:
-            list.sortAscending();
-            cout << "List in ascending order: " << list << endl;
-            break;
-        case 19:
-            cout << "Position: ";
-            cin >> pos;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Value: ";
-            getline(cin, value);
-            result = list.insertAtPosition(pos, value);
-            cout << (result ? "Inserted" : "Invalid position") << endl;
-            break;
-        case 20:
-            cout << "Value to insert before: ";
-            getline(cin, key);
-            cout << "New Value: ";
-            getline(cin, value);
-            result = list.insertBefore(key, value);
-            cout << (result ? "Inserted" : "Key not found") << endl;
-            break;
-        case 21:
-            cout << "Value to remove all occurrences: ";
-            getline(cin, value);
-            result = list.removeAllOccurrences(value);
-            cout << (result ? "Removed all occurrences" : "Value not found") << endl;
-            break;
-        case 22:
-            cout << "Value to remove after: ";
-            getline(cin, key);
-            result = list.removeAfter(key);
-            cout << (result ? "Removed" : "Deletion failed.") << endl;
-            break;
         case 23:
-            cout << "Value to remove before: ";
-            getline(cin, key);
-            result = list.removeBefore(key);
-            cout << (result ? "Removed" : "Deletion failed.") << endl;
+            list += list2;
+            cout << "After concatenation: " << list;
             break;
         case 24:
+            if (pool.freeCount() == 0)
+            {
+                cout << "No free slots available. \n"
+                     << endl
+                     << "Used slots: ";
+                pool.displayUsed(cout);
+                break;
+            }
+            if (pool.usedCount() == 0)
+            {
+                cout << "No used slots available. \n"
+                     << endl
+                     << "Free slots: ";
+                pool.displayFree(cout);
+                break;
+            }
+            cout << "Free slots: \n";
+            pool.displayFree(cout);
+            cout << endl
+                 << "Used slots: ";
+            pool.displayUsed(cout);
+            break;
+        case 25:
             return 0;
         default:
             cout << "Invalid option" << endl;
@@ -225,4 +276,3 @@ int main()
 
     return 0;
 }
-
