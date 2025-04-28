@@ -196,7 +196,7 @@ int main()
             cout << "New Value: ";
             getline(cin, value);
             result = list.insertBefore(key, value);
-            cout << (result ? "Inserted" : "Key not found") << endl;
+            cout << (result ) << endl;
             break;
         case 21:
             cout << "Value to remove all occurrences: ";
