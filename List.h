@@ -323,7 +323,10 @@ template <typename T, int NUM_NODES>
 void ArrayLinkedList<T, NUM_NODES>::insertFront(const T &value)
 {
     int nodeIdx = pool.newNode();
-    if (nodeIdx == NULL_INDEX)
+if (nodeIdx == NULL_INDEX)
+{
+    bool deleted = false;
+    while (!deleted)
     {
         std::cout << "List is full. Choose deletion method:\n"
                   << "  1) Delete Front\n"
@@ -334,32 +337,36 @@ void ArrayLinkedList<T, NUM_NODES>::insertFront(const T &value)
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        bool ok = false;
         if (choice == 1)
-            ok = deleteFront();
+            deleted = deleteFront();
         else if (choice == 2)
-            ok = deleteBack();
+            deleted = deleteBack();
         else if (choice == 3)
         {
             std::cout << "Value to delete: ";
             T delVal;
             std::getline(std::cin, delVal);
-            ok = removeValue(delVal);
+            deleted = removeValue(delVal);
+        }
+        else
+        {
+            std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
         }
 
-        if (!ok)
+        if (!deleted && (choice == 1 || choice == 2 || choice == 3))
         {
-            std::cout << "Deletion failed, aborting insertFront.\n";
-            return;
-        }
-
-        nodeIdx = pool.newNode();
-        if (nodeIdx == NULL_INDEX)
-        {
-            std::cout << "Still no free node, aborting insertFront.\n";
-            return;
+            std::cout << "Deletion failed. Try again.\n";
         }
     }
+
+    nodeIdx = pool.newNode();
+    if (nodeIdx == NULL_INDEX)
+    {
+        std::cout << "Still no free node, aborting insertFront.\n";
+        return;
+    }
+}
+
 
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = head;
@@ -372,33 +379,40 @@ void ArrayLinkedList<T, NUM_NODES>::insertBack(const T &value)
     int nodeIdx = pool.newNode();
     if (nodeIdx == NULL_INDEX)
     {
-        std::cout << "List is full. Choose deletion method:\n"
-                  << "  1) Delete Front\n"
-                  << "  2) Delete Back\n"
-                  << "  3) Delete by Value\n"
-                  << "Enter choice (1/2/3): ";
-        int choice;
-        std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        bool ok = false;
-        if (choice == 1)
-            ok = deleteFront();
-        else if (choice == 2)
-            ok = deleteBack();
-        else if (choice == 3)
+        bool deleted = false;
+        while (!deleted)
         {
-            std::cout << "Value to delete: ";
-            T delVal;
-            std::getline(std::cin, delVal);
-            ok = removeValue(delVal);
+            std::cout << "List is full. Choose deletion method:\n"
+                      << "  1) Delete Front\n"
+                      << "  2) Delete Back\n"
+                      << "  3) Delete by Value\n"
+                      << "Enter choice (1/2/3): ";
+            int choice;
+            std::cin >> choice;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    
+            if (choice == 1)
+                deleted = deleteFront();
+            else if (choice == 2)
+                deleted = deleteBack();
+            else if (choice == 3)
+            {
+                std::cout << "Value to delete: ";
+                T delVal;
+                std::getline(std::cin, delVal);
+                deleted = removeValue(delVal);
+            }
+            else
+            {
+                std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+            }
+    
+            if (!deleted && (choice == 1 || choice == 2 || choice == 3))
+            {
+                std::cout << "Deletion failed. Try again.\n";
+            }
         }
-
-        if (!ok)
-        {
-            std::cout << "Deletion failed, aborting insertBack.\n";
-            return;
-        }
+    
         nodeIdx = pool.newNode();
         if (nodeIdx == NULL_INDEX)
         {
@@ -431,6 +445,10 @@ bool ArrayLinkedList<T, NUM_NODES>::insertBefore(const T &key, const T &value)
     int newIdx = pool.newNode();
     if (newIdx == NULL_INDEX)
     {
+        bool deleted = false;
+
+        while (!deleted)
+        {
         std::cout << "List is full. Choose deletion method:\n"
                   << "  1) Delete Front\n"
                   << "  2) Delete Back\n"
@@ -440,30 +458,29 @@ bool ArrayLinkedList<T, NUM_NODES>::insertBefore(const T &key, const T &value)
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        bool ok = false;
+        
         if (choice == 1)
-            ok = deleteFront();
+           deleted = deleteFront();
         else if (choice == 2)
-            ok = deleteBack();
+        deleted = deleteBack();
         else if (choice == 3)
         {
             std::cout << "Value to delete: ";
             T v;
             std::getline(std::cin, v);
-            ok = removeValue(v);
+            deleted = removeValue(v);
         }
         else
         {
-            std::cout << "Invalid choice.\n";
-            return false;
+            std::cout << "Invalid choice . Please enter 1, 2, or 3 .\n";
+        
         }
 
-        if (!ok)
-        {
-            std::cout << "Deletion failed, aborting insertBefore.\n";
-            return false;
+        if (!deleted && (choice == 1 || choice == 2 || choice == 3))
+            {
+                std::cout << "Deletion failed. Try again.\n";
+            }
         }
-
         newIdx = pool.newNode();
         if (newIdx == NULL_INDEX)
         {
@@ -496,54 +513,53 @@ bool ArrayLinkedList<T, NUM_NODES>::insertBefore(const T &key, const T &value)
 template <typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
 {
-
     int ptr = head;
     while (ptr != NULL_INDEX && pool[ptr].data != key)
         ptr = pool[ptr].next;
     if (ptr == NULL_INDEX)
         return false;
-
+    
     int nodeIdx = pool.newNode();
     if (nodeIdx == NULL_INDEX)
     {
-
-        std::cout << "List is full. Choose how to delete:\n";
-        std::cout << "1. Delete Front\n";
-        std::cout << "2. Delete Back\n";
-        std::cout << "3. Delete Specific Value\n";
-        std::cout << "Enter choice (1/2/3): ";
-        int choice;
-        std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
         bool deleted = false;
-        if (choice == 1)
+        while (!deleted)
         {
-            deleted = deleteFront();
+            std::cout << "List is full. Choose how to delete:\n";
+            std::cout << "1. Delete Front\n";
+            std::cout << "2. Delete Back\n";
+            std::cout << "3. Delete Specific Value\n";
+            std::cout << "Enter choice (1/2/3): ";
+            int choice;
+            std::cin >> choice;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    
+            if (choice == 1)
+            {
+                deleted = deleteFront();
+            }
+            else if (choice == 2)
+            {
+                deleted = deleteBack();
+            }
+            else if (choice == 3)
+            {
+                std::cout << "Enter value to delete: ";
+                T delVal;
+                std::getline(std::cin, delVal);
+                deleted = removeValue(delVal);
+            }
+            else
+            {
+                std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+            }
+    
+            if (!deleted && (choice == 1 || choice == 2 || choice == 3))
+            {
+                std::cout << "Deletion failed. Try again.\n";
+            }
         }
-        else if (choice == 2)
-        {
-            deleted = deleteBack();
-        }
-        else if (choice == 3)
-        {
-            std::cout << "Enter value to delete: ";
-            T delVal;
-            std::getline(std::cin, delVal);
-            deleted = removeValue(delVal);
-        }
-        else
-        {
-            std::cout << "Invalid choice.\n";
-            return false;
-        }
-
-        if (!deleted)
-        {
-            std::cout << "Deletion failed.\n";
-            return false;
-        }
-
+    
         nodeIdx = pool.newNode();
         if (nodeIdx == NULL_INDEX)
         {
@@ -551,7 +567,7 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
             return false;
         }
     }
-
+    
     pool[nodeIdx].data = value;
     pool[nodeIdx].next = pool[ptr].next;
     pool[ptr].next = nodeIdx;
@@ -816,7 +832,10 @@ template <typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::insertSorted(const T &value)
 {
     int newIdx = pool.newNode();
-    if (newIdx == NULL_INDEX)
+if (newIdx == NULL_INDEX)
+{
+    bool ok = false;
+    while (!ok)
     {
         std::cout << "List is full. Choose deletion method:\n"
                   << "  1) Delete Front\n"
@@ -827,7 +846,6 @@ bool ArrayLinkedList<T, NUM_NODES>::insertSorted(const T &value)
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        bool ok = false;
         if (choice == 1)
         {
             ok = deleteFront();
@@ -845,23 +863,24 @@ bool ArrayLinkedList<T, NUM_NODES>::insertSorted(const T &value)
         }
         else
         {
-            std::cout << "Invalid choice.\n";
-            return false;
+            std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+            
         }
 
-        if (!ok)
+        if (!ok && (choice == 1 || choice == 2 || choice == 3))
         {
-            std::cout << "Deletion failed, aborting insertSorted.\n";
-            return false;
-        }
-
-        newIdx = pool.newNode();
-        if (newIdx == NULL_INDEX)
-        {
-            std::cout << "Still no free node, aborting insertSorted.\n";
-            return false;
+            std::cout << "Deletion failed. Try again.\n";
         }
     }
+
+    newIdx = pool.newNode();
+    if (newIdx == NULL_INDEX)
+    {
+        std::cout << "Still no free node, aborting insertSorted.\n";
+        return false;
+    }
+}
+
     pool[newIdx].data = value;
     pool[newIdx].next = NULL_INDEX;
 
@@ -893,40 +912,41 @@ bool ArrayLinkedList<T, NUM_NODES>::insertSortedDescending(const T &value)
     int newIdx = pool.newNode();
     if (newIdx == NULL_INDEX)
     {
-
-        std::cout << "List is full. Choose deletion method:\n"
-                  << "  1) Delete Front\n"
-                  << "  2) Delete Back\n"
-                  << "  3) Delete by Value\n"
-                  << "Enter choice (1/2/3): ";
-        int choice;
-        std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
         bool ok = false;
-        if (choice == 1)
-            ok = deleteFront();
-        else if (choice == 2)
-            ok = deleteBack();
-        else if (choice == 3)
+        while (!ok)
         {
-            std::cout << "Value to delete: ";
-            T v;
-            std::getline(std::cin, v);
-            ok = removeValue(v);
-        }
-        else
-        {
-            std::cout << "Invalid choice.\n";
-            return false;
-        }
+            std::cout << "List is full. Choose deletion method:\n"
+                      << "  1) Delete Front\n"
+                      << "  2) Delete Back\n"
+                      << "  3) Delete by Value\n"
+                      << "Enter choice (1/2/3): ";
+            int choice;
+            std::cin >> choice;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    
+            if (choice == 1)
+                ok = deleteFront();
+            else if (choice == 2)
+                ok = deleteBack();
+            else if (choice == 3)
+            {
+                std::cout << "Value to delete: ";
+                T v;
+                std::getline(std::cin, v);
+                ok = removeValue(v);
+            }
+            else
+            {
+                std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
 
-        if (!ok)
-        {
-            std::cout << "Deletion failed, aborting insertSortedDescending.\n";
-            return false;
+            }
+    
+            if (!ok && (choice == 1 || choice == 2 || choice == 3))
+            {
+                std::cout << "Deletion failed. Try again.\n";
+            }
         }
-
+    
         newIdx = pool.newNode();
         if (newIdx == NULL_INDEX)
         {
@@ -934,7 +954,7 @@ bool ArrayLinkedList<T, NUM_NODES>::insertSortedDescending(const T &value)
             return false;
         }
     }
-
+    
     pool[newIdx].data = value;
     pool[newIdx].next = NULL_INDEX;
 
@@ -1040,13 +1060,15 @@ template <typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::insertAtPosition(int position, const T &value)
 {
     int sz = size();
-    if (position < 0 || position > sz)
-        return false;
+if (position < 0 || position > sz)
+    return false;
 
-    int newIdx = pool.newNode();
-    if (newIdx == NULL_INDEX)
+int newIdx = pool.newNode();
+if (newIdx == NULL_INDEX)
+{
+    bool ok = false;
+    while (!ok)
     {
-
         std::cout << "List is full. Choose deletion method:\n"
                   << "  1) Delete Front\n"
                   << "  2) Delete Back\n"
@@ -1056,16 +1078,14 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAtPosition(int position, const T &valu
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        bool ok = false;
         if (choice == 1)
-        {
+        
             ok = deleteFront();
-        }
-        else if (choice == 2)
-        {
+        
+            else if (choice == 2)
             ok = deleteBack();
-        }
-        else if (choice == 3)
+        
+            else if (choice == 3)
         {
             std::cout << "Value to delete: ";
             T delVal;
@@ -1074,23 +1094,24 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAtPosition(int position, const T &valu
         }
         else
         {
-            std::cout << "Invalid choice.\n";
-            return false;
+            std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+            continue; // ask again
         }
 
-        if (!ok)
+        if (!ok && (choice == 1 || choice == 2 || choice == 3))
         {
-            std::cout << "Deletion failed, aborting insertAtPosition.\n";
-            return false;
-        }
-
-        newIdx = pool.newNode();
-        if (newIdx == NULL_INDEX)
-        {
-            std::cout << "Still no free node, aborting insertAtPosition.\n";
-            return false;
+            std::cout << "Deletion failed. Try again.\n";
         }
     }
+
+    newIdx = pool.newNode();
+    if (newIdx == NULL_INDEX)
+    {
+        std::cout << "Still no free node, aborting insertAtPosition.\n";
+        return false;
+    }
+}
+
 
     pool[newIdx].data = value;
 
