@@ -204,7 +204,7 @@ int main()
             cout << (result ? "Removed" : "Deletion failed.") << endl;
             break;
         case 15:
-            list.sortAscending();
+            list.sortAscending(); 
             cout << "List in ascending order: " << list << endl;
             break;
         case 16:
