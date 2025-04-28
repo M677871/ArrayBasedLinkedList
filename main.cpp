@@ -18,7 +18,7 @@ int main()
              << "1. Insert Front\n"
              << "2. Insert Back\n"
              << "3. Insert After\n"
-             << "4. Insert At Position\n"
+             << "4. Insert \n"
              << "5. Remove Value\n"
              << "6. Remove At Position\n"
              << "7. Display List\n"
@@ -30,7 +30,11 @@ int main()
              << "13. Create/Append to second list\n"
              << "14. Remove Duplicates\n"
              << "15. Insert in Sorted Order\n"
-             << "16. Exit\n"
+             << "16. Insert in Descending Order\n"
+             << "17.sort in descending order\n"
+             << "18. Sort in ascending order\n"
+             <<"19. insert At a specific  position\n"
+             << "20. Exit\n"
              << "Select an option: ";
         int choice;
         if (!(cin >> choice))
@@ -150,6 +154,29 @@ int main()
             cout << "List after insertion: " << list;
             break;
         case 16:
+            cout << "value to insert in descending order: ";
+            getline(cin, value);
+            list.insertSorted(value);
+            cout << "List after insertion: " << list;
+            break;
+        case 17:
+            list.sortDescending();
+            cout << "List in descending order: " << list << endl;
+            break;
+        case 18:
+            list.sortAscending();
+            cout << "List in ascending order: " << list << endl;
+            break;
+case 19:
+            cout << "Position: ";
+            cin >> pos;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Value: ";
+            getline(cin, value);
+            result = list.insertAtPosition(pos, value);
+            cout << (result ? "Inserted" : "Invalid position") << endl;
+            break;
+        case 20:
             return 0;
         default:
             cout << "Invalid option" << endl;
@@ -158,47 +185,7 @@ int main()
 
     return 0;
 
-}
+ }
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/cppFiles/main.cc to edit this template
- */
-
-/*
- * File:   main.cpp
- * Author: MYK
- *
- * Created on April 22, 2025, 2:26 PM
- */
-/*
-#include <iostream>
-#include "List.h"
-#include "NodePool.h"
-
-int main(int argc, char** argv) {
-    NodePool<std::string> pool;
-    List<std::string> myList(pool);
-
-    // Insert elements
-    myList.insertFront("Smith");
-    myList.insertFront("Jones");
-    myList.insertFront("Brown");
-
-    std::cout << "Initial list:\n";
-    myList.display();
-
-    // Insert "Grant" after "Brown"
-    myList.insertAfter("Brown", "Grant");
-    std::cout << "\nAfter inserting 'Grant' after 'Brown':\n";
-    myList.display();
-
-    // Delete "Jones"
-    myList.remove("Jones");
-    std::cout << "\nAfter deleting 'Jones':\n";
-    myList.display();
-
-    return 0;
-}
-
-*/
+ 
+ 
