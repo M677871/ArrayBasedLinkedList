@@ -103,6 +103,7 @@ public:
     void insertFront(const T &value);
     void insertBack(const T &value);
     bool insertAfter(const T &key, const T &value);
+    bool insertBefore(const T &key, const T &value);
     bool insertAt(int position, const T &value);
     /*----------------------------------------------------------------------
       Insert elements in various positions: front, back, after key, or at position.
@@ -113,6 +114,9 @@ public:
 
     /***** remove operations *****/
     bool removeValue(const T &value);
+    bool removeAllOccurrences(const T &value);
+    bool removeBefore(const T &key);
+    bool removeAfter(const T &key);
     // bool removeAt(int position);
     /*----------------------------------------------------------------------
       Remove elements by value or position.
@@ -417,25 +421,78 @@ void ArrayLinkedList<T, NUM_NODES>::insertBack(const T &value)
     }
 }
 
-/*
 template <typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
+bool ArrayLinkedList<T, NUM_NODES>::insertBefore(const T &key, const T &value)
 {
-    int ptr = head;
+
+    if (head == NULL_INDEX)
+        return false;
+
+    int newIdx = pool.newNode();
+    if (newIdx == NULL_INDEX)
+    {
+        std::cout << "List is full. Choose deletion method:\n"
+                  << "  1) Delete Front\n"
+                  << "  2) Delete Back\n"
+                  << "  3) Delete by Value\n"
+                  << "Enter choice (1/2/3): ";
+        int choice;
+        std::cin >> choice;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        bool ok = false;
+        if (choice == 1)
+            ok = deleteFront();
+        else if (choice == 2)
+            ok = deleteBack();
+        else if (choice == 3)
+        {
+            std::cout << "Value to delete: ";
+            T v;
+            std::getline(std::cin, v);
+            ok = removeValue(v);
+        }
+        else
+        {
+            std::cout << "Invalid choice.\n";
+            return false;
+        }
+
+        if (!ok)
+        {
+            std::cout << "Deletion failed, aborting insertBefore.\n";
+            return false;
+        }
+
+        newIdx = pool.newNode();
+        if (newIdx == NULL_INDEX)
+        {
+            std::cout << "Still no free node, aborting insertBefore.\n";
+            return false;
+        }
+    }
+
+    int ptr = head, prev = NULL_INDEX;
     while (ptr != NULL_INDEX && pool[ptr].data != key)
+    {
+        prev = ptr;
         ptr = pool[ptr].next;
+    }
+
     if (ptr == NULL_INDEX)
         return false;
-    int nodeIdx = pool.newNode();
-    if (nodeIdx == NULL_INDEX)
-        return false;
-    pool[nodeIdx].data = value;
-    pool[nodeIdx].next = pool[ptr].next;
-    pool[ptr].next = nodeIdx;
+
+    pool[newIdx].data = value;
+    pool[newIdx].next = ptr;
+
+    if (prev == NULL_INDEX)
+        head = newIdx;
+    else
+        pool[prev].next = newIdx;
+
     return true;
 }
 
-*/
 template <typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
 {
@@ -502,35 +559,35 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
     return true;
 }
 
-/**
 template <typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T &value)
+bool ArrayLinkedList<T, NUM_NODES>::removeAllOccurrences(const T &value)
 {
+    bool removed = false;
+    int ptr = head, prev = NULL_INDEX;
 
-    if (arrayIndex < 0 || arrayIndex >= NUM_NODES)
-        return false;
-
-    if (!pool.acquire(arrayIndex))
-        return false;
-
-    pool[arrayIndex].data = value;
-    pool[arrayIndex].next = NULL_INDEX;
-
-    if (head == NULL_INDEX)
+    while (ptr != NULL_INDEX)
     {
-        head = arrayIndex;
-    }
-    else
-    {
-        int ptr = head;
-        while (pool[ptr].next != NULL_INDEX)
+        if (pool[ptr].data == value)
+        {
+            if (prev == NULL_INDEX)
+                head = pool[ptr].next;
+            else
+                pool[prev].next = pool[ptr].next;
+
+            int toDelete = ptr;
             ptr = pool[ptr].next;
-        pool[ptr].next = arrayIndex;
+            pool.deleteNode(toDelete);
+            removed = true;
+        }
+        else
+        {
+            prev = ptr;
+            ptr = pool[ptr].next;
+        }
     }
 
-    return true;
+    return removed;
 }
-*/
 
 template <typename T, int NUM_NODES>
 bool ArrayLinkedList<T, NUM_NODES>::insertAt(int arrayIndex, const T &value)
@@ -596,26 +653,64 @@ bool ArrayLinkedList<T, NUM_NODES>::removeValue(const T &value)
     return true;
 }
 
-/*
 template <typename T, int NUM_NODES>
-bool ArrayLinkedList<T, NUM_NODES>::removeAt(int position)
+bool ArrayLinkedList<T, NUM_NODES>::removeAfter(const T &key)
 {
-    if (position < 0 || position >= size())
-        return false;
-    int ptr = head, prev = NULL_INDEX;
-    for (int i = 0; i < position; ++i)
+   
+    int ptr = head;
+    while (ptr != NULL_INDEX && pool[ptr].data != key)
     {
-        prev = ptr;
         ptr = pool[ptr].next;
     }
-    if (prev == NULL_INDEX)
-        head = pool[ptr].next;
-    else
-        pool[prev].next = pool[ptr].next;
-    pool.deleteNode(ptr);
+  
+    if (ptr == NULL_INDEX || pool[ptr].next == NULL_INDEX)
+    {
+        return false;
+    }
+    int toRemove = pool[ptr].next;
+    pool[ptr].next = pool[toRemove].next;
+   
+    pool.deleteNode(toRemove);
     return true;
 }
-*/
+
+template <typename T, int NUM_NODES>
+bool ArrayLinkedList<T, NUM_NODES>::removeBefore(const T &key)
+{
+
+    if (head == NULL_INDEX || pool[head].data == key)
+    {
+        return false;
+    }
+
+    int second = pool[head].next;
+    if (second != NULL_INDEX && pool[second].data == key)
+    {
+        int toRemove = head;
+        head = pool[head].next;
+        pool.deleteNode(toRemove);
+        return true;
+    }
+
+    int prevPrev = head;
+    int prev = pool[head].next;
+    int curr = pool[prev].next;
+    while (curr != NULL_INDEX && pool[curr].data != key)
+    {
+        prevPrev = prev;
+        prev = curr;
+        curr = pool[curr].next;
+    }
+
+    if (curr != NULL_INDEX)
+    {
+        pool[prevPrev].next = pool[prev].next;
+        pool.deleteNode(prev);
+        return true;
+    }
+    return false; // key not found
+}
+
 template <typename T, int NUM_NODES>
 int ArrayLinkedList<T, NUM_NODES>::find(const T &value) const
 {
@@ -949,8 +1044,9 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAtPosition(int position, const T &valu
         return false;
 
     int newIdx = pool.newNode();
-    if (newIdx == NULL_INDEX) {
-        
+    if (newIdx == NULL_INDEX)
+    {
+
         std::cout << "List is full. Choose deletion method:\n"
                   << "  1) Delete Front\n"
                   << "  2) Delete Back\n"
@@ -961,27 +1057,36 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAtPosition(int position, const T &valu
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         bool ok = false;
-        if (choice == 1) {
+        if (choice == 1)
+        {
             ok = deleteFront();
-        } else if (choice == 2) {
+        }
+        else if (choice == 2)
+        {
             ok = deleteBack();
-        } else if (choice == 3) {
+        }
+        else if (choice == 3)
+        {
             std::cout << "Value to delete: ";
             T delVal;
             std::getline(std::cin, delVal);
             ok = removeValue(delVal);
-        } else {
+        }
+        else
+        {
             std::cout << "Invalid choice.\n";
             return false;
         }
 
-        if (!ok) {
+        if (!ok)
+        {
             std::cout << "Deletion failed, aborting insertAtPosition.\n";
             return false;
         }
 
         newIdx = pool.newNode();
-        if (newIdx == NULL_INDEX) {
+        if (newIdx == NULL_INDEX)
+        {
             std::cout << "Still no free node, aborting insertAtPosition.\n";
             return false;
         }
@@ -989,354 +1094,24 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAtPosition(int position, const T &valu
 
     pool[newIdx].data = value;
 
-    if (position == 0) {
+    if (position == 0)
+    {
         pool[newIdx].next = head;
         head = newIdx;
-    } else {
+    }
+    else
+    {
         int prev = head;
-        for (int i = 1; i < position; ++i) {
+        for (int i = 1; i < position; ++i)
+        {
             prev = pool[prev].next;
         }
         pool[newIdx].next = pool[prev].next;
-        pool[prev].next  = newIdx;
+        pool[prev].next = newIdx;
     }
 
     return true;
 }
 
-
 #endif // LIST_H
 
-/*
-#ifndef LIST_H
-#define LIST_H
-
-#include "NodePool.h"
-#include <iostream>
-
-template <typename T>
-class List {
-private:
-    int first;        // Pointer to the first node in the list
-    NodePool<T>& pool; // Reference to the node pool
-    int count;        // Number of elements in the list
-
-public:
-    List(NodePool<T>& poolRef);  // Constructor to initialize the list
-
-    void insertFront(const T& value);   // Insert value at the front
-    void insertAfter(const T& target, const T& value); // Insert value after target
-    void remove(const T& value);   // Remove a node by value
-    void insertAt(int position, const T& value);  // Insert value at specific position
-    void insertSorted(const T& value);   // Insert value in sorted order
-    void display() const;    // Display the list
-    bool isEmpty() const;  // Check if the list is empty
-    int size() const;      // Get the number of elements in the list
-    void clear();          // Clear the entire list
-    void reverse();        // Reverse the list
-    void removeDuplicates(); // Remove duplicate values
-    int find(const T& value) const; // Find index by value
-    T getAt(int position) const; // Get the value at a specific index
-    bool removeAt(int position);   // Remove an element at a specific position
-    List<T>& operator+=(const List<T>& rhs);   // Concatenate two lists
-    List<T> operator+(const List<T>& rhs) const; // Concatenate two lists and return a new list
-    List<T>& operator=(const List<T>& other);   // Assignment operator
-};
-
-// Implementation Section
-
-// Constructor initializes the list with a reference to the pool and sets the first pointer to NULL_VALUE
-template <typename T>
-List<T>::List(NodePool<T>& poolRef) : pool(poolRef), first(NULL_VALUE), count(0) {}
-
-// Check if the list is empty
-template <typename T>
-bool List<T>::isEmpty() const {
-    return first == NULL_VALUE;
-}
-
-// Get the size of the list
-template <typename T>
-int List<T>::size() const {
-    return count;
-}
-
-// Insert value at the front
-template <typename T>
-void List<T>::insertFront(const T& value) {
-    int ptr = pool.newNode();
-    if (ptr == NULL_VALUE) {
-        std::cout << "No space available.\n";
-        return;
-    }
-    pool.node[ptr].data = value;
-    pool.node[ptr].next = first;
-    first = ptr;
-    ++count;
-}
-
-// Insert value after target
-template <typename T>
-void List<T>::insertAfter(const T& target, const T& value) {
-    int curr = first;
-    while (curr != NULL_VALUE && pool.node[curr].data != target)
-        curr = pool.node[curr].next;
-
-    if (curr == NULL_VALUE) {
-        std::cout << "Target not found.\n";
-        return;
-    }
-
-    int ptr = pool.newNode();
-    if (ptr == NULL_VALUE) {
-        std::cout << "No space available.\n";
-        return;
-    }
-
-    pool.node[ptr].data = value;
-    pool.node[ptr].next = pool.node[curr].next;
-    pool.node[curr].next = ptr;
-    ++count;
-}
-
-// Remove a node by value
-template <typename T>
-void List<T>::remove(const T& value) {
-    if (first == NULL_VALUE) return;
-
-    if (pool.node[first].data == value) {
-        int temp = first;
-        first = pool.node[first].next;
-        pool.deleteNode(temp);
-        --count;
-        return;
-    }
-
-    int curr = first;
-    while (curr != NULL_VALUE && pool.node[curr].next != NULL_VALUE &&
-           pool.node[pool.node[curr].next].data != value)
-        curr = pool.node[curr].next;
-
-    if (curr != NULL_VALUE && pool.node[curr].next != NULL_VALUE) {
-        int temp = pool.node[curr].next;
-        pool.node[curr].next = pool.node[temp].next;
-        pool.deleteNode(temp);
-        --count;
-    }
-}
-template <typename T>
-void List<T>::clear() {
-    while (first != NULL_VALUE) {
-        int temp = first;
-        first = pool.node[first].next;
-        pool.deleteNode(temp);
-    }
-    count = 0;
-}
-
-// Insert value at specific position
-template <typename T>
-void List<T>::insertAt(int position, const T& value) {
-    if (position < 0 || position > count) {
-        std::cout << "Invalid position.\n";
-        return;
-    }
-
-    int newPtr = pool.newNode();
-    if (newPtr == NULL_VALUE) {
-        std::cout << "No space available.\n";
-        return;
-    }
-    pool.node[newPtr].data = value;
-
-    if (position == 0) {
-        pool.node[newPtr].next = first;
-        first = newPtr;
-        ++count;
-        return;
-    }
-
-    int curr = first;
-    for (int i = 0; i < position - 1; ++i)
-        curr = pool.node[curr].next;
-
-    pool.node[newPtr].next = pool.node[curr].next;
-    pool.node[curr].next = newPtr;
-    ++count;
-}
-
-// Insert value in sorted order
-template <typename T>
-void List<T>::insertSorted(const T& value) {
-    int newPtr = pool.newNode();
-    if (newPtr == NULL_VALUE) {
-        std::cout << "No space available.\n";
-        return;
-    }
-
-    pool.node[newPtr].data = value;
-
-    // Insert at front if list is empty or value is smallest
-    if (first == NULL_VALUE || value < pool.node[first].data) {
-        pool.node[newPtr].next = first;
-        first = newPtr;
-        ++count;
-        return;
-    }
-
-    int curr = first;
-    while (curr != NULL_VALUE && pool.node[curr].data < value) {
-        curr = pool.node[curr].next;
-    }
-
-    pool.node[newPtr].next = pool.node[curr].next;
-    pool.node[curr].next = newPtr;
-    ++count;
-}
-
-// Display the list
-template <typename T>
-void List<T>::display() const {
-    int ptr = first;
-    while (ptr != NULL_VALUE) {
-        std::cout << pool.node[ptr].data << " -> ";
-        ptr = pool.node[ptr].next;
-    }
-    std::cout << "NULL\n";
-}
-
-// Reverse the list
-template <typename T>
-void List<T>::reverse() {
-    int prev = NULL_VALUE, curr = first, next = NULL_VALUE;
-    while (curr != NULL_VALUE) {
-        next = pool.node[curr].next;
-        pool.node[curr].next = prev;
-        prev = curr;
-        curr = next;
-    }
-    first = prev;
-}
-
-// Remove duplicates from the list
-template <typename T>
-void List<T>::removeDuplicates() {
-    int curr = first;
-    while (curr != NULL_VALUE) {
-        int runner = pool.node[curr].next;
-        int prev = curr;
-        while (runner != NULL_VALUE) {
-            if (pool.node[curr].data == pool.node[runner].data) {
-                pool.node[prev].next = pool.node[runner].next;
-                pool.deleteNode(runner);
-                --count;
-            } else {
-                prev = runner;
-            }
-            runner = pool.node[runner].next;
-        }
-        curr = pool.node[curr].next;
-    }
-}
-
-// Find index by value
-template <typename T>
-int List<T>::find(const T& value) const {
-    int curr = first;
-    int index = 0;
-    while (curr != NULL_VALUE) {
-        if (pool.node[curr].data == value)
-            return index;
-        curr = pool.node[curr].next;
-        ++index;
-    }
-    return -1;
-}
-
-// Get value at specific position
-template <typename T>
-T List<T>::getAt(int position) const {
-    if (position < 0 || position >= count)
-        throw std::out_of_range("Index out of bounds");
-
-    int curr = first;
-    for (int i = 0; i < position; ++i)
-        curr = pool.node[curr].next;
-
-    return pool.node[curr].data;
-}
-
-// Remove an element at a specific position
-template <typename T>
-bool List<T>::removeAt(int position) {
-    if (position < 0 || position >= count) return false;
-
-    if (position == 0) {
-        int temp = first;
-        first = pool.node[first].next;
-        pool.deleteNode(temp);
-        --count;
-        return true;
-    }
-
-    int curr = first;
-    for (int i = 0; i < position - 1; ++i)
-        curr = pool.node[curr].next;
-
-    int temp = pool.node[curr].next;
-    pool.node[curr].next = pool.node[temp].next;
-    pool.deleteNode(temp);
-    --count;
-    return true;
-}
-
-// Concatenate two lists
-template <typename T>
-List<T>& List<T>::operator+=(const List<T>& rhs) {
-    int curr = rhs.first;
-    while (curr != NULL_VALUE) {
-        insertFront(pool.node[curr].data);
-        curr = pool.node[curr].next;
-    }
-    reverse(); // Reverse to preserve the original order
-    count += rhs.count;
-    return *this;
-}
-
-// Concatenate two lists and return a new list
-template <typename T>
-List<T> List<T>::operator+(const List<T>& rhs) const {
-    List<T> result(pool);
-    int curr = first;
-    while (curr != NULL_VALUE) {
-        result.insertFront(pool.node[curr].data);
-        curr = pool.node[curr].next;
-    }
-
-    curr = rhs.first;
-    while (curr != NULL_VALUE) {
-        result.insertFront(pool.node[curr].data);
-        curr = pool.node[curr].next;
-    }
-
-    result.reverse(); // Reverse to preserve the order
-    return result;
-}
-
-// Assignment operator
-template <typename T>
-List<T>& List<T>::operator=(const List<T>& other) {
-    if (this == &other) return *this;
-
-    clear();
-    int curr = other.first;
-    while (curr != NULL_VALUE) {
-        insertFront(pool.node[curr].data);
-        curr = pool.node[curr].next;
-    }
-    reverse(); // Reverse to preserve original order
-
-    return *this; //
-}
-#endif // LIST_H
-*/

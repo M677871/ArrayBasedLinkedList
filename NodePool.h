@@ -22,10 +22,16 @@ template <typename T, int NUM_NODES>
 class NodePool
 {
 public:
-    /***** Node class *****/
+    /***** Node class *****
     class Node
     {
     public:
+        T data;
+        int next;
+    };
+    */
+
+    struct Node {
         T data;
         int next;
     };
@@ -227,53 +233,3 @@ void NodePool<T, NUM_NODES>::displayUsed(std::ostream &os) const
 #endif // NODE_POOL_H
 
 
-/*#ifndef NODEPOOL_H
-#define NODEPOOL_H
-
-const int NULL_VALUE = -1;
-const int NUM_NODES = 2048;
-
-template <typename T>
-class NodePool {
-public:
-    struct NodeType {
-        T data;
-        int next ;
-    };
-
-    NodeType node[NUM_NODES];
-    int free;
-
-    NodePool();                     // Constructor to initialize pool
-    int newNode();                  // Allocate a new node from pool
-    void deleteNode(int ptr);      // Return node back to pool
-};
-
-// Implementation
-
-template <typename T>
-NodePool<T>::NodePool() {
-    for (int i = 0; i < NUM_NODES - 1; ++i)
-        node[i].next = i + 1;
-    node[NUM_NODES - 1].next = NULL_VALUE;
-    free = 0;
-}
-
-template <typename T>
-int NodePool<T>::newNode() {
-    if (free == NULL_VALUE)
-        return NULL_VALUE;
-    int ptr = free;
-    free = node[free].next;
-    node[ptr].next = NULL_VALUE;
-    return ptr;
-}
-
-template <typename T>
-void NodePool<T>::deleteNode(int ptr) {
-    node[ptr].next = free;
-    free = ptr;
-}
-
-#endif // NODEPOOL_H
-*/
