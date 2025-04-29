@@ -119,12 +119,14 @@ int main()
             {
                 cout << "No free slots available. \n"
                      << endl;
-                break;
             }
-            cout << "Free slots: ";
-            pool.displayFree(cout);
-            cout << endl
-                 << "Position: ";
+            else
+            {
+                cout << "choose a position  between 0 and " << pool.usedCount()  << endl;
+               
+            };
+
+            cout << "Position: ";
             cin >> pos;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Value: ";
@@ -137,12 +139,14 @@ int main()
             {
                 cout << "No free slots available. \n"
                      << endl;
-                break;
             }
-            cout << "Free slots: ";
-            pool.displayFree(cout);
-            cout << endl
-                 << "Position: ";
+            else
+            {
+                cout << "Free slots: ";
+                pool.displayFree(cout);
+                cout << endl;
+            };
+            cout << "Position: ";
             cin >> pos;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Value: ";
@@ -204,7 +208,7 @@ int main()
             cout << (result ? "Removed" : "Deletion failed.") << endl;
             break;
         case 15:
-            list.sortAscending(); 
+            list.sortAscending();
             cout << "List in ascending order: " << list << endl;
             break;
         case 16:
