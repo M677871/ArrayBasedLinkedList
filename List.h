@@ -351,6 +351,7 @@ if (nodeIdx == NULL_INDEX)
         else
         {
             std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+            continue;
         }
 
         if (!deleted && (choice == 1 || choice == 2 || choice == 3))
@@ -405,6 +406,7 @@ void ArrayLinkedList<T, NUM_NODES>::insertBack(const T &value)
             else
             {
                 std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+                continue;
             }
     
             if (!deleted && (choice == 1 || choice == 2 || choice == 3))
@@ -473,7 +475,7 @@ bool ArrayLinkedList<T, NUM_NODES>::insertBefore(const T &key, const T &value)
         else
         {
             std::cout << "Invalid choice . Please enter 1, 2, or 3 .\n";
-        
+             continue;
         }
 
         if (!deleted && (choice == 1 || choice == 2 || choice == 3))
@@ -552,6 +554,7 @@ bool ArrayLinkedList<T, NUM_NODES>::insertAfter(const T &key, const T &value)
             else
             {
                 std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+                continue;
             }
     
             if (!deleted && (choice == 1 || choice == 2 || choice == 3))
@@ -864,7 +867,7 @@ if (newIdx == NULL_INDEX)
         else
         {
             std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
-            
+            continue;
         }
 
         if (!ok && (choice == 1 || choice == 2 || choice == 3))
@@ -938,7 +941,7 @@ bool ArrayLinkedList<T, NUM_NODES>::insertSortedDescending(const T &value)
             else
             {
                 std::cout << "Invalid choice. Please enter 1, 2, or 3.\n";
-
+                continue;
             }
     
             if (!ok && (choice == 1 || choice == 2 || choice == 3))
