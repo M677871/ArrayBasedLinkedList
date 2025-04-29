@@ -1,3 +1,25 @@
+/*-- main.cpp --------------------------------------------------------------
+
+  This program provides an interactive, menu-driven interface to test and
+  demonstrate the functionality of the ArrayLinkedList<T,N> class backed
+  by a fixed-size NodePool<T,N>. Users can insert, remove, search, sort,
+  and display elements without dynamic memory allocation.
+
+  Usage:
+    • The list capacity is determined by the template parameter N (here N=5).
+    • Two lists (`list` and `list2`) share the same NodePool.
+    • Menu options 1–8:  various insert operations (front, back, after/before a specific value, etc.).
+    • Menu options 9–14: various remove operations (front, back, value, etc.).
+    • Menu options 15–16: sorting in ascending or descending order.
+    • Menu options 17–24: other operations (display, find, reverse, size, etc.).
+    • Menu option   25: exit the program.
+
+  Precondition:  None (NodePool and lists initialize to empty state).
+  Postcondition: All allocations and deallocations occur within the fixed
+                 pool; program exits cleanly when user selects “25. Exit”.
+
+-------------------------------------------------------------------------*/
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -22,8 +44,8 @@ int main()
              << "\n4. Insert Before A Specific Value"
              << "\n5. Insert In Ascending Order"
              << "\n6. Insert In Descending Order"
-             << "\n7. Insert At A Specific Position"
-             << "\n8. Insert Back At A Position"
+             << "\n7. Insert At A Specific Position" // option to insert the value between 0 and the size
+             << "\n8. Insert Back At A Position" // the value is always inserted at the back by choosing one of the free slots
 
              << "\n\n=== Remove Operations ==="
              << "\n9. Remove Value"

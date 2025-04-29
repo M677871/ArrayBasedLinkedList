@@ -1,19 +1,51 @@
 /*-- List.h --------------------------------------------------------------
 
   This header file defines the template class ArrayLinkedList for managing
-  a singly linked list using an array-based node pool. Basic operations are:
-     Constructor
-     isEmpty:   Check if list is empty
-     size:      Return number of elements
-     insert:    Insert elements (front, back, after, at position)
-     remove:    Remove by value or by position
-     find:      Locate an element's position
-     getAt:     Access an element by position
-     reverse:   Reverse the list
-     clear:     Clear the list
-     display:   Output the list
+  a singly linked list using an array-based NodePool.
+
+  Public operations include:
+     • Constructor                     – build an empty list from a NodePool  
+     • Copy constructor                – deep-copy another list  
+     • Destructor                      – return all nodes to the pool  
+     • operator=                       – assign one list to another  
+     • operator+=, operator+           – append/concatenate lists  
+
+     • isEmpty()                       – test for an empty list  
+     • size()                          – count elements  
+     • clear()                         – remove all elements  
+     • display(os)                     – print “[v1, v2, …]” or “Empty”  
+
+  Insert operations (with full-pool handling prompts):
+     • insertFront(value)              – push at head  
+     • insertBack(value)               – append at tail  
+     • insertBefore(key, value)        – insert just before first key  
+     • insertAfter(key, value)         – insert just after first key  
+     • insertAt(index, value)          – force-insert at specific pool slot  
+     • insertAtPosition(pos, value)    – insert by logical position  
+     • insertSorted(value)             – insert in ascending order  
+     • insertSortedDescending(value)   – insert in descending order  
+
+  Remove operations:
+     • deleteFront()                   – pop from head  
+     • deleteBack()                    – remove from tail  
+     • removeSlot(slotIdx)             – remove by pool index  
+     • removeValue(value)              – remove first match  
+     • removeAllOccurrences(value)     – remove every match  
+     • removeAfter(key)                – remove node after first key  
+     • removeBefore(key)               – remove node before first key  
+
+  Search & access:
+     • find(value)                     – return zero-based index or –1  
+     • getAt(position)                 – reference element by position  
+
+  Other utilities:
+     • reverse()                       – reverse the list in-place  
+     • removeDuplicates()             – drop repeated values  
+     • sortAscending()                – in-place ascending sort  
+     • sortDescending()               – in-place descending sort  
 
 -------------------------------------------------------------------------*/
+
 
 #ifndef LIST_H
 #define LIST_H
@@ -29,175 +61,277 @@ class ArrayLinkedList
 public:
     /******** Function Members ********/
 
-    /***** Class constructor *****/
-    ArrayLinkedList(NodePool<T, NUM_NODES> &p);
-    /*----------------------------------------------------------------------
-      Construct an ArrayLinkedList object.
+/***** Class constructor *****/
+ArrayLinkedList(NodePool<T, NUM_NODES> &p);
+/*----------------------------------------------------------------------
+  Construct an ArrayLinkedList object.
 
-      Precondition:  The caller passes a reference to a NodePool.
-      Postcondition: An empty list object is constructed with head == NULL_INDEX.
-    -----------------------------------------------------------------------*/
-    /***** Class copy constructor *****/
-    ArrayLinkedList(const ArrayLinkedList &other);
-    /*----------------------------------------------------------------------
-      Copy constructor for ArrayLinkedList.
+  Precondition:  The caller passes a reference to a NodePool.
+  Postcondition: An empty list object is constructed with head == NULL_INDEX.
+-----------------------------------------------------------------------*/
 
-      Precondition:  The caller passes a reference to another ArrayLinkedList.
-      Postcondition: A new list object is created as a copy of the other list.
-    -----------------------------------------------------------------------*/
+/***** Class copy constructor *****/
+ArrayLinkedList(const ArrayLinkedList &other);
+/*----------------------------------------------------------------------
+  Copy constructor for ArrayLinkedList.
 
-    /***** Class destructor *****/
-    ~ArrayLinkedList();
-    /*----------------------------------------------------------------------
-      Destructor for ArrayLinkedList.
+  Precondition:  The caller passes a reference to another ArrayLinkedList.
+  Postcondition: A new list object is created as a copy of the other list.
+-----------------------------------------------------------------------*/
 
-      Precondition:  None
-      Postcondition: The list is cleared and all nodes are released.
-    -----------------------------------------------------------------------*/
+/***** Class destructor *****/
+~ArrayLinkedList();
+/*----------------------------------------------------------------------
+  Destructor for ArrayLinkedList.
 
-    /***** isEmpty operation *****/
-    bool isEmpty() const;
-    /*----------------------------------------------------------------------
-      Check if the list is empty.
+  Precondition:  None
+  Postcondition: The list is cleared and all nodes are released to the pool.
+-----------------------------------------------------------------------*/
 
-      Precondition:  None
-      Postcondition: Returns true if the list has no elements.
-    -----------------------------------------------------------------------*/
+/***** isEmpty operation *****/
+bool isEmpty() const;
+/*----------------------------------------------------------------------
+  Check if the list is empty.
 
-    /***** size operation *****/
-    int size() const;
-    /*----------------------------------------------------------------------
-      Get the number of elements in the list.
+  Precondition:  None
+  Postcondition: Returns true if the list has no elements.
+-----------------------------------------------------------------------*/
 
-      Precondition:  None
-      Postcondition: Returns the size of the list.
-    -----------------------------------------------------------------------*/
+/***** size operation *****/
+int size() const;
+/*----------------------------------------------------------------------
+  Get the number of elements in the list.
 
-    /***** clear operation *****/
-    void clear();
-    /*----------------------------------------------------------------------
-      Remove all elements from the list.
+  Precondition:  None
+  Postcondition: Returns the size of the list.
+-----------------------------------------------------------------------*/
 
-      Precondition:  None
-      Postcondition: The list is empty and all nodes are released.
-    -----------------------------------------------------------------------*/
+/***** clear operation *****/
+void clear();
+/*----------------------------------------------------------------------
+  Remove all elements from the list.
 
-    /***** display operation *****/
-    void display(std::ostream &os = std::cout) const;
-    /*----------------------------------------------------------------------
-      Display the contents of the list.
+  Precondition:  None
+  Postcondition: The list is empty and all nodes are released to the pool.
+-----------------------------------------------------------------------*/
 
-      Precondition:  os is a valid output stream.
-      Postcondition: Elements of the list are printed in sequence.
-    -----------------------------------------------------------------------*/
-    bool removeSlot(int slotIdx);
-    /*----------------------------------------------------------------------
-      Remove a node at a specific index.
+/***** display operation *****/
+void display(std::ostream &os = std::cout) const;
+/*----------------------------------------------------------------------
+  Display the contents of the list.
 
-      Precondition:  slotIdx is within valid range.
-      Postcondition: The node at slotIdx is removed from the list.
-    -----------------------------------------------------------------------*/
-    bool deleteBack();
-    bool deleteFront();
-    /***** insert operations *****/
-    void insertFront(const T &value);
-    void insertBack(const T &value);
-    bool insertAfter(const T &key, const T &value);
-    bool insertBefore(const T &key, const T &value);
-    bool insertAt(int position, const T &value);
-    /*----------------------------------------------------------------------
-      Insert elements in various positions: front, back, after key, or at position.
+  Precondition:  os is a valid output stream.
+  Postcondition: Elements of the list are printed in sequence.
+-----------------------------------------------------------------------*/
 
-      Precondition:  Valid index or key must exist (for insertAfter/insertAt).
-      Postcondition: Element is added to the correct location.
-    -----------------------------------------------------------------------*/
+/***** Insert Operations *****/
+void insertFront(const T &value);
+/*----------------------------------------------------------------------
+  Insert at front, with full-pool handling.
 
-    /***** remove operations *****/
-    bool removeValue(const T &value);
-    bool removeAllOccurrences(const T &value);
-    bool removeBefore(const T &key);
-    bool removeAfter(const T &key);
-    // bool removeAt(int position);
-    /*----------------------------------------------------------------------
-      Remove elements by value or position.
+  Precondition:  None.
+  Postcondition: A node containing `value` is allocated at head.
+                 If pool is full, prompts user to delete then retries.
+-----------------------------------------------------------------------*/
 
-      Precondition:  Value exists or position is within bounds.
-      Postcondition: Element is removed and pool is updated.
-    -----------------------------------------------------------------------*/
+void insertBack(const T &value);
+/*----------------------------------------------------------------------
+  Insert at back, with full-pool handling.
 
-    /***** find operation *****/
-    int find(const T &value) const;
-    /*----------------------------------------------------------------------
-      Get index of a given value in the list.
+  Precondition:  None.
+  Postcondition: A node containing `value` is allocated at tail.
+                 If pool is full, prompts user to delete then retries.
+-----------------------------------------------------------------------*/
 
-      Precondition:  None
-      Postcondition: Returns index or -1 if not found.
-    -----------------------------------------------------------------------*/
+bool insertAfter(const T &key, const T &value);
+/*----------------------------------------------------------------------
+  Insert a new element after the first occurrence of a key.
 
-    /***** getAt operation *****/
-    T &getAt(int position) const;
-    /*----------------------------------------------------------------------
-      Get the value at a specific index.
+  Precondition:  Key must exist in the list.
+  Postcondition: A new node with `value` is linked immediately after key;
+                 returns true on success, false if key not found.
+-----------------------------------------------------------------------*/
 
-      Precondition:  Position is within bounds.
-      Postcondition: Returns a reference to the value.
-    -----------------------------------------------------------------------*/
+bool insertBefore(const T &key, const T &value);
+/*----------------------------------------------------------------------
+  Insert a new element before the first occurrence of a key.
 
-    /***** reverse operation *****/
-    void reverse();
-    /*----------------------------------------------------------------------
-      Reverse the order of elements in the list.
+  Precondition:  List not empty, key exists.
+  Postcondition: A new node with `value` is linked immediately before key;
+                 returns true on success, false if key not found.
+-----------------------------------------------------------------------*/
 
-      Precondition:  None
-      Postcondition: List order is reversed.
-    -----------------------------------------------------------------------*/
+bool insertAt(int position, const T &value);
+/*----------------------------------------------------------------------
+  Insert a new element at the specified index.
 
-    void removeDuplicates();
-    /*----------------------------------------------------------------------
-      Remove duplicate values from the list.
+  Precondition:  Position is valid (0 <= position <= size()).
+  Postcondition: If slot free, it’s acquired and appended; if full, prompts
+                 user to delete at that slot then retries; returns true on success.
+-----------------------------------------------------------------------*/
 
-      Precondition:  None
-      Postcondition: All duplicates are removed.
-    -----------------------------------------------------------------------*/
+bool insertAtPosition(int position, const T &value);
+/*----------------------------------------------------------------------
+  Same as insertAt — retained for compatibility.
 
-    /***** operator overloads *****/
+  Precondition:  Position is valid (0 <= position <= size()).
+  Postcondition: Value is inserted at the given position.
+-----------------------------------------------------------------------*/
 
-    ArrayLinkedList &operator+=(const ArrayLinkedList &rhs);
-    /*----------------------------------------------------------------------
-      Concatenate two lists.
+bool insertSorted(const T &value);
+/*----------------------------------------------------------------------
+  Insert value while keeping list in ascending order.
 
-      Precondition:  None
-      Postcondition: Appends rhs to the current list.
-    -----------------------------------------------------------------------*/
+  Precondition:  The list must already be sorted in ascending order.
+  Postcondition: Value is inserted in correct position to maintain order.   
+-----------------------------------------------------------------------*/
 
-    ArrayLinkedList operator+(const ArrayLinkedList &rhs) const;
-    /*----------------------------------------------------------------------
-      Concatenate two lists.
+bool insertSortedDescending(const T &value);
+/*----------------------------------------------------------------------
+  Insert value while keeping list in descending order.
 
-      Precondition:  None
-      Postcondition: Returns a new list that is the concatenation of both.
-    -----------------------------------------------------------------------*/
-    // Constructor from external pool
+  Precondition:  The list must already be sorted in descending order.
+  Postcondition: Value is inserted in correct position to maintain order.
+-----------------------------------------------------------------------*/
 
-    ArrayLinkedList &operator=(const ArrayLinkedList &other);
-    /*----------------------------------------------------------------------
-      Assignment operator for ArrayLinkedList.
+/***** Remove Operations *****/
+bool deleteFront();
+/*----------------------------------------------------------------------
+  Remove the element at the front of the list.
 
-      Precondition:  The caller passes a reference to another ArrayLinkedList.
-      Postcondition: The current list is assigned the values of the other list.
-    -----------------------------------------------------------------------*/
+  Precondition:  The list must not be empty.
+  Postcondition: The first element is removed
+                 The first node is returned to the pool;
+                 head advanced to next; returns true.
+-----------------------------------------------------------------------*/
 
-    bool insertSorted(const T &value);
-    bool insertSortedDescending(const T &value);
-    bool insertAtPosition(int position, const T &value);
+bool deleteBack();
+/*----------------------------------------------------------------------
+  Remove the element at the end of the list.
 
-    // Sort the list’s elements in ascending order (smallest → largest)
-    void sortAscending();
+  Precondition:  The list must not be empty.
+  Postcondition: The last element is removed
+                 The last node is returned to the pool;
+                 the new last node’s `next == NULL_INDEX`; returns true.
+-----------------------------------------------------------------------*/
 
-    // Sort the list’s elements in descending order (largest → smallest)
-    void sortDescending();
+bool removeSlot(int slotIdx);
+/*----------------------------------------------------------------------
+  Remove a node at a specific index.
 
-    ;
+  Precondition:  slotIdx must be a valid index in the list.
+  Postcondition: If that index is in the list, it’s unlinked and
+                 returned to the pool; returns true, else false.
+-----------------------------------------------------------------------*/
+
+bool removeValue(const T &value);
+/*----------------------------------------------------------------------
+  Remove the first occurrence of the value from the list.
+
+  Precondition:  Value must exist in the list.
+  Postcondition: The value is removed from the list.
+-----------------------------------------------------------------------*/
+
+bool removeAllOccurrences(const T &value);
+/*----------------------------------------------------------------------
+  Remove all occurrences of a value from the list.
+
+  Precondition:  None
+  Postcondition: All matching elements are removed.
+-----------------------------------------------------------------------*/
+
+bool removeBefore(const T &key);
+/*----------------------------------------------------------------------
+  Remove the node before the first occurrence of the key.
+
+  Precondition:  Key must exist and not be the first node.
+  Postcondition: The node before the key is removed.
+-----------------------------------------------------------------------*/
+
+bool removeAfter(const T &key);
+/*----------------------------------------------------------------------
+  Remove the node after the first occurrence of the key.
+
+  Precondition:  Key must exist and not be the last node.
+  Postcondition: The node after the key is removed.
+-----------------------------------------------------------------------*/
+
+void removeDuplicates();
+/*----------------------------------------------------------------------
+  Remove all duplicate elements from the list.
+
+  Precondition:  None
+  Postcondition: Only the first occurrence of each element remains.
+-----------------------------------------------------------------------*/
+
+/***** Sorting Operations *****/
+void sortAscending();
+/*----------------------------------------------------------------------
+  Sort the list in ascending (smallest to largest) order.
+
+  Precondition:  None
+  Postcondition: The list is sorted in ascending order.
+-----------------------------------------------------------------------*/
+
+void sortDescending();
+/*----------------------------------------------------------------------
+  Sort the list in descending (largest to smallest) order.
+
+  Precondition:  None
+  Postcondition: The list is sorted in descending order.
+-----------------------------------------------------------------------*/
+
+/***** Other Operations *****/
+
+int find(const T &value) const;
+/*----------------------------------------------------------------------
+  Find the index of a given value in the list.
+
+  Precondition:  None
+  Postcondition: Returns index of the value or -1 if not found.
+-----------------------------------------------------------------------*/
+
+T &getAt(int position) const;
+/*----------------------------------------------------------------------
+  Get a reference to the element at the given position.
+
+  Precondition:  Position must be valid (0 <= position < size()).
+  Postcondition: Returns a reference to the element.
+-----------------------------------------------------------------------*/
+
+void reverse();
+/*----------------------------------------------------------------------
+  Reverse the order of the list.
+
+  Precondition:  None
+  Postcondition: The order of elements is reversed.
+-----------------------------------------------------------------------*/
+
+/***** Operator Overloads *****/
+ArrayLinkedList &operator+=(const ArrayLinkedList &rhs);
+/*----------------------------------------------------------------------
+  Append the contents of rhs to this list.
+
+  Precondition:  Total size must not exceed pool capacity.
+  Postcondition: This list includes all elements from rhs.
+-----------------------------------------------------------------------*/
+
+ArrayLinkedList operator+(const ArrayLinkedList &rhs) const;
+/*----------------------------------------------------------------------
+  Return a new list that is the concatenation of this list and rhs.
+
+  Precondition:  Total size must not exceed pool capacity.
+  Postcondition: New list includes all elements from both.
+-----------------------------------------------------------------------*/
+
+ArrayLinkedList &operator=(const ArrayLinkedList &other);
+/*----------------------------------------------------------------------
+  Assignment operator for ArrayLinkedList.
+
+  Precondition:  The caller passes a valid ArrayLinkedList.
+  Postcondition: The current list is cleared and replaced with other's values.
+-----------------------------------------------------------------------*/
+
 
 private:
     /******** Data Members ********/

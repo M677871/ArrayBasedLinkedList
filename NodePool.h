@@ -2,17 +2,24 @@
 /*-- NodePool.h --------------------------------------------------------------
 
   This header file defines the template class NodePool for managing a
-  pool of nodes in a fixed-size array. Basic operations are:
-     Constructor
-     acquire:   Get a free node index
-     release:   Return a node to the pool
-     []:        Access a node by index
-     freeCount: Count free nodes
+  pool of nodes in a fixed-size array.
+
+  Basic operations are:
+     Constructor:   Initialize the node pool and set up the free list.
+     newNode:       Acquire a free node index directly (returns NULL_INDEX if none).
+     acquire:       Mark a specific node index as used if it is currently free.
+     deleteNode:    Return a node to the free list for reuse.
+     operator[]:    Access nodes by index (modifiable and const versions).
+     isNodeFree:    Check whether a node is in the free list.
+     freeCount:     Count how many nodes are currently available.
+     usedCount:     Count how many nodes are currently in use.
+     displayFree:   Print indices of nodes in the free list.
+     displayUsed:   Print indices of nodes currently in use.
 -------------------------------------------------------------------------*/
 
 #ifndef NODE_POOL_H
 #define NODE_POOL_H
-//using namespace std;
+// using namespace std;
 #include <iostream>
 #include <stdexcept>
 
@@ -31,7 +38,8 @@ public:
     };
     */
 
-    struct Node {
+    struct Node
+    {
         T data;
         int next;
     };
@@ -91,10 +99,45 @@ public:
       Precondition:  None
       Postcondition: Returns the number of free nodes.
     -----------------------------------------------------------------------*/
+
+    /***** usedCount operation *****/
     int usedCount() const;
+    /*----------------------------------------------------------------------
+      Count the number of nodes currently used in the pool.
+
+      Precondition:  None
+      Postcondition: Returns the number of used nodes.
+    -----------------------------------------------------------------------*/
+
+    /***** isNodeFree operation *****/
     bool isNodeFree(int idx) const;
+    /*----------------------------------------------------------------------
+      Check whether a node at a given index is free in the node pool.
+
+      Precondition:  idx is a valid index within the pool (0 <= idx < NUM_NODES)
+      Postcondition: Returns true if the node at the specified index is currently
+                     free (i.e., present in the free list); false otherwise.
+    ------------------------------------------------------------------------*/
+
+    /***** displayFree operation *****/
     void displayFree(std::ostream &os) const;
+    /*----------------------------------------------------------------------
+      Output the indices of all currently free nodes in the pool.
+
+      Precondition:  None
+      Postcondition: The output stream will contain a list of indices that
+                     are currently in the free list.
+    ------------------------------------------------------------------------*/
+
+    /***** displayUsed operation *****/
     void displayUsed(std::ostream &os) const;
+    /*----------------------------------------------------------------------
+      Output the indices of all currently used nodes in the pool.
+
+      Precondition:  None
+      Postcondition: The output stream will contain a list of indices that
+                     are currently in use (i.e., not in the free list).
+    ------------------------------------------------------------------------*/
 
 private:
     /******** Data Members ********/
@@ -102,7 +145,6 @@ private:
     int freeHead;         ///< Index of the head of the free list
 
 }; //--- end of NodePool class
-
 
 /***** Implementation Section *****/
 
@@ -142,27 +184,33 @@ template <typename T, int NUM_NODES>
 bool NodePool<T, NUM_NODES>::acquire(int idx)
 {
 
+    // Validate index range
     if (idx < 0 || idx >= NUM_NODES)
     {
         throw std::out_of_range("acquire: index out of range");
         return false;
     }
-    int prev = NULL_INDEX, cur = freeHead;
+    int prev = NULL_INDEX; // Previous node in the free list
+    int cur = freeHead;    // Current node in traversal
 
+    // Traverse the free list to find the node with the given index
     while (cur != NULL_INDEX && cur != idx)
     {
         prev = cur;
         cur = pool[cur].next;
     }
+
+    // If idx is not found in the free list, it’s already in use
     if (cur == NULL_INDEX)
         return false;
 
+    // Remove idx from the free list
     if (prev == NULL_INDEX)
-        freeHead = pool[cur].next;
+        freeHead = pool[cur].next; // idx is at the head
     else
-        pool[prev].next = pool[cur].next;
-    pool[cur].next = NULL_INDEX;
-    return true;
+        pool[prev].next = pool[cur].next; // idx is in the middle or end
+    pool[cur].next = NULL_INDEX;          // Disconnect node from free list
+    return true;                          // Node successfully acquired
 }
 
 template <typename T, int NUM_NODES>
@@ -214,8 +262,10 @@ void NodePool<T, NUM_NODES>::displayFree(std::ostream &os) const
 {
     os << "[";
     bool first = true;
-    for (int ptr = freeHead; ptr != NULL_INDEX; ptr = pool[ptr].next) {
-        if (!first) os << ", ";
+    for (int ptr = freeHead; ptr != NULL_INDEX; ptr = pool[ptr].next)
+    {
+        if (!first)
+            os << ", ";
         os << ptr;
         first = false;
     }
@@ -227,9 +277,12 @@ void NodePool<T, NUM_NODES>::displayUsed(std::ostream &os) const
 {
     os << "[";
     bool first = true;
-    for (int idx = 0; idx < NUM_NODES; ++idx) {
-        if (!isNodeFree(idx)) {
-            if (!first) os << ", ";
+    for (int idx = 0; idx < NUM_NODES; ++idx)
+    {
+        if (!isNodeFree(idx))
+        {
+            if (!first)
+                os << ", ";
             os << idx;
             first = false;
         }
@@ -238,5 +291,3 @@ void NodePool<T, NUM_NODES>::displayUsed(std::ostream &os) const
 }
 
 #endif // NODE_POOL_H
-
-
